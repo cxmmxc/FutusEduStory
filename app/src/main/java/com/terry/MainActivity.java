@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -58,15 +59,32 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             Document document = null;
             try {
-                document = Jsoup.connect("http://www.qbaobei.com/jiaoyu/tj/tjgs/List_2.html").timeout(5000)
+                document = Jsoup.connect("http://www.haoyunbb.com/gushi/1.html").timeout(5000)
                             .post();
-                Elements elements = document.getElementsByClass("div.tips");
-                Element element = elements.first();
-                Log.v("cxm", element.toString());
+//                Elements elements = document.getElementsByClass("ulTextlist_2 clear");
+                Elements elements = document.select("[class]");
+                for(Element element : elements){
+                    if(element == null){
+                        Log.v("cxm", "null");
+                    }else {
+                        String className = element.className();
+                        if("ulTextlist_2 clear".equals(className)) {
+//                            Log.v("cxm", "className="+className+"~~~~~~"+ element.toString()+"\n\n");
+
+                            Elements children = element.children();
+                            for( Element child : children) {
+                                Elements href = child.getElementsByAttribute("href");
+                                Element first = href.first();
+                                Log.v("cxm", first.text());
+                            }
+                        }
+                    }
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return document.toString();
+            return document.html();
         }
     }
 
