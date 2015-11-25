@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
                                 Elements href = child.getElementsByAttribute("href");
                                 Element first = href.first();
                                 Log.v("cxm", first.text());
+
                             }
                         }
                     }
