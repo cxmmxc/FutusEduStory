@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private Toolbar mToobar;
+
     private TextView textview;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textview = (TextView) findViewById(R.id.textview);
         textview.setMovementMethod(ScrollingMovementMethod.getInstance());
+        mToobar = (Toolbar) findViewById(R.id.main_toobar);
+        setSupportActionBar(mToobar);
     }
 
     @Override
@@ -59,25 +64,42 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
             Document document = null;
             try {
-                document = Jsoup.connect("http://www.haoyunbb.com/gushi/1.html").timeout(5000)
-                            .post();
+                document = Jsoup.connect("http://www.qbaobei.com/jiaoyu/tj/tjgs/List_38.html").timeout(5000)
+                        .post();
 //                Elements elements = document.getElementsByClass("ulTextlist_2 clear");
+                Element page = document.select("div.page").first();
+                Elements children = page.children();
+                if(children.size() == 1 && "prev".equals(children.first().attr("class"))) {
+                    Log.i("cxm","the last one");
+                }
+
                 Elements elements = document.select("[class]");
                 for(Element element : elements){
                     if(element == null){
                         Log.v("cxm", "null");
                     }else {
                         String className = element.className();
-                        if("ulTextlist_2 clear".equals(className)) {
+                        if("index-ul".equals(className)) {
 //                            Log.v("cxm", "className="+className+"~~~~~~"+ element.toString()+"\n\n");
 
-                            Elements children = element.children();
-                            for( Element child : children) {
-                                Elements href = child.getElementsByAttribute("href");
-                                Element first = href.first();
-                                Log.v("cxm", first.text());
-
+                            Elements elements1 = element.select("li");
+                            Log.v("cxm", "size=" + elements1.size());
+                            for (Element child : elements1) {
+                                Element href = child.select("[href]").first();
+                                String name = href.text();
+                                Element img = child.select("img[src]").first();
+                                Log.w("cxm", "href=" + href.attr("href") + " ~~ name=" + name + " ~~ img=");
+                                if(null == img) {
+                                    Log.e("cxm", "img = null");
+                                }
                             }
+//                            Elements children = element.children();
+//                            for( Element child : children) {
+//                                Elements href = child.getElementsByAttribute("href");
+//                                Element first = href.first();
+//                                Log.v("cxm", first.text());
+//
+//                            }
                         }
                     }
                 }
@@ -85,8 +107,58 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return document.html();
+            if(document != null) {
+                return document.toString();
+            }
+            return null;
         }
     }
+
+//    class AsyTask extends AsyncTask<Void, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(String s) {
+//            super.onPostExecute(s);
+//            textview.setText(s);
+//        }
+//
+//        @Override
+//        protected String doInBackground(Void... params) {
+//            Document document = null;
+//            try {
+//                document = Jsoup.connect("http://www.haoyunbb.com/gushi/1.html").timeout(5000)
+//                            .post();
+////                Elements elements = document.getElementsByClass("ulTextlist_2 clear");
+//                Elements elements = document.select("[class]");
+//                for(Element element : elements){
+//                    if(element == null){
+//                        Log.v("cxm", "null");
+//                    }else {
+//                        String className = element.className();
+//                        if("ulTextlist_2 clear".equals(className)) {
+////                            Log.v("cxm", "className="+className+"~~~~~~"+ element.toString()+"\n\n");
+//
+//                            Elements children = element.children();
+//                            for( Element child : children) {
+//                                Elements href = child.getElementsByAttribute("href");
+//                                Element first = href.first();
+//                                Log.v("cxm", first.text());
+//
+//                            }
+//                        }
+//                    }
+//                }
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return document.html();
+//        }
+//    }
 
 }
