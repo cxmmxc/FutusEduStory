@@ -38,7 +38,12 @@ public class MainActivity extends AppCompatActivity {
         textview = (TextView) findViewById(R.id.textview);
         textview.setMovementMethod(ScrollingMovementMethod.getInstance());
         mToobar = (Toolbar) findViewById(R.id.main_toobar);
+        mToobar.setTitle("Mytitle");
         setSupportActionBar(mToobar);
+        initData();
+    }
+
+    private void initData() {
     }
 
     @Override
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.w("cxm", "href=" + href.attr("href") + " ~~ name=" + name + " ~~ img=");
                                 if(null == img) {
                                     Log.e("cxm", "img = null");
+
                                 }
                             }
 //                            Elements children = element.children();

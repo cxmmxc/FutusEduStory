@@ -9,6 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
+        android:title="@string/app_name"
+        android:titleTextColor="@android:color/white"
         />
 
     <TextView
