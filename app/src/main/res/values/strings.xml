@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">FutusEduStory</string>
+    <string name="action_settings">Settings</string>
+    <string name="app_name">胎教小工具</string>
+    <string name="futus_story">胎教故事</string>
+    <string name="futus_music">胎教音乐</string>
+
+    <array name="drawble_left_list">
+        <item >"胎教故事"</item>
+        <item >"胎教音乐"</item>
+    </array>
 </resources>
