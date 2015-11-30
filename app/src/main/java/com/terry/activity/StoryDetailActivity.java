@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.terry.BaseActivity;
 import com.terry.R;
 import com.terry.bean.StoryBean;
+import com.terry.util.MeasureTool;
 import com.terry.util.NetUtil;
 
 import org.jsoup.Jsoup;
@@ -38,6 +40,8 @@ public class StoryDetailActivity extends BaseActivity {
 
     private ProgressBar progressbar;
     private TextView text11;
+    private WebSettings mWebViewSettings;
+    private String mStyle;
 
     @Override
     protected void initView() {
@@ -55,12 +59,27 @@ public class StoryDetailActivity extends BaseActivity {
 //        progressDialog = new ProgressDialog(mContext);
 //        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 //        progressDialog.setMessage("加载中");
-        mUrl = mStoryBean.getPicUrl();
+        mUrl = mStoryBean.getmContentUrl();
         title = mStoryBean.getTitle();
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.getSettings().setDefaultTextEncodingName("utf-8");
+        int[] screenWH = MeasureTool.getScreenWH(mContext);
+
+        mStyle = "<head><style>img{width:"+screenWH[0]/3+"px !important;}</style></head>";
+
+        mWebViewSettings = mWebView.getSettings();
+        //让缩放显示的最小值为起始
+//        mWebView.setInitialScale(5);
+        mWebViewSettings.setJavaScriptEnabled(true);
+        // 设置可以支持缩放
+//        mWebViewSettings.setSupportZoom(true);
+//// 设置出现缩放工具
+//        mWebViewSettings.setBuiltInZoomControls(true);
+        mWebViewSettings.setDefaultTextEncodingName("utf-8");
+//        mWebViewSettings.setUseWideViewPort(true);
+//        mWebViewSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        mWebViewSettings.setLoadWithOverviewMode(true);
 //判断是否有网
         if (!NetUtil.isNetworkAvailable(this)) {
+            progressbar.setVisibility(View.GONE);
             return;
         }
 //        mWebView.loadUrl(mUrl);
@@ -74,7 +93,6 @@ public class StoryDetailActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 //            progressDialog.show();
-            progressbar.setVisibility(View.VISIBLE);
         }
 
 
@@ -105,7 +123,7 @@ public class StoryDetailActivity extends BaseActivity {
 //            progressDialog.dismiss();
 //            text11.setText(s);
 //            Log.w("cxm", s);
-            mWebView.loadDataWithBaseURL("http://www.qbaobei.com", s, "text/html", "utf-8", null);
+            mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle+s, "text/html", "utf-8", null);
 //            mWebView.loadData(s, "text/html", "UTF-8");
         }
     }
@@ -116,7 +134,7 @@ public class StoryDetailActivity extends BaseActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 //                return super.shouldOverrideUrlLoading(view, url);
-                return true;
+                return false;
             }
 
             @Override
@@ -130,7 +148,8 @@ public class StoryDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            public void onReceivedError(WebView view, WebResourceRequest request,
+                                        WebResourceError error) {
                 super.onReceivedError(view, request, error);
             }
         });

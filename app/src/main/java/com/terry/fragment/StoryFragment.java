@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -42,6 +43,7 @@ public class StoryFragment extends BaseFragment {
     private StoryContentAdapter mStoryAdapter;
     private ListView mStoryList;
     private String mBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_"+mStart+".html";
+    private ProgressBar progressbar;
 
     @Nullable
     @Override
@@ -58,6 +60,7 @@ public class StoryFragment extends BaseFragment {
     protected void initView() {
         story_pull_list = (PullToRefreshListView) mRootView.findViewById(R.id.story_pull_list);
         mStoryList = story_pull_list.getRefreshableView();
+        progressbar = (ProgressBar) mRootView.findViewById(R.id.progressbar);
     }
 
     @Override
@@ -67,6 +70,7 @@ public class StoryFragment extends BaseFragment {
         mStoryList.setAdapter(mStoryAdapter);
         //判断是否有网
         if (!NetUtil.isNetworkAvailable(mActivity)) {
+            progressbar.setVisibility(View.GONE);
             return;
         }
         getStoryData();
@@ -124,7 +128,7 @@ public class StoryFragment extends BaseFragment {
             if(children.size() == 1 && "prev".equals(children.first().attr("class"))) {
                 Log.i("cxm", "the last one");
             }
-
+            progressbar.setVisibility(View.GONE);
             Elements elements = document.select("[class]");
             for(Element element : elements){
                 if(element == null){
