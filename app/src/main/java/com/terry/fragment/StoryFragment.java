@@ -18,6 +18,7 @@ import com.terry.R;
 import com.terry.activity.StoryDetailActivity;
 import com.terry.adapter.StoryContentAdapter;
 import com.terry.bean.StoryBean;
+import com.terry.util.NetUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -64,8 +65,13 @@ public class StoryFragment extends BaseFragment {
         story_pull_list.setMode(PullToRefreshBase.Mode.BOTH);
         mStoryAdapter = new StoryContentAdapter(mActivity);
         mStoryList.setAdapter(mStoryAdapter);
+        //判断是否有网
+        if (!NetUtil.isNetworkAvailable(mActivity)) {
+            return;
+        }
         getStoryData();
     }
+
 
     private void getStoryData() {
         new AsyTask().execute(mBaseUrl);
@@ -90,10 +96,9 @@ public class StoryFragment extends BaseFragment {
         mStoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                StoryBean storyBean = mStoryAdapter.getItem(position);
+                StoryBean storyBean = mStoryAdapter.getItem(position-1);
                 Intent intent = new Intent(mActivity, StoryDetailActivity.class);
-                intent.putExtra("url", storyBean.getmUrlContent());
-                intent.putExtra("title", storyBean.getTitle());
+                intent.putExtra("storyBean", storyBean);
                 startActivity(intent);
             }
         });
@@ -139,12 +144,12 @@ public class StoryFragment extends BaseFragment {
                             Log.w("cxm", "href=" + href.attr("href") + " ~~ name=" + name + "" +
                                     " ~~ img=");
                             bean.setTitle(name);
-                            bean.setmUrlContent(href.attr("href"));
+                            bean.setmContentUrl(href.attr("href"));
                             if (null == img) {
                                 Log.e("cxm", "img = null");
-                                bean.setUrl("");
+                                bean.setPicUrl("");
                             }else {
-                                bean.setUrl(img.attr("src"));
+                                bean.setPicUrl(img.attr("src"));
                             }
                             storyBeans.add(bean);
                         }

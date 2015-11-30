@@ -6,24 +6,34 @@ import java.io.Serializable;
  * Created by lmz_cxm on 2015/11/28.
  */
 public class StoryBean implements Serializable {
-    private String url;
+    private String picUrl;
     private String title;
-    private String mUrlContent;
+    private String mContentUrl;
 
-    public String getmUrlContent() {
-        return mUrlContent;
+    public String getContent() {
+        return Content;
     }
 
-    public void setmUrlContent(String mUrlContent) {
-        this.mUrlContent = mUrlContent;
+    public void setContent(String content) {
+        Content = content;
     }
 
-    public String getUrl() {
-        return url;
+    private String Content;
+
+    public String getmContentUrl() {
+        return mContentUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setmContentUrl(String mContentUrl) {
+        this.mContentUrl = mContentUrl;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
     }
 
     public String getTitle() {

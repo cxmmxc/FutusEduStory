@@ -69,10 +69,12 @@ public class StoryContentAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        String url = storyBean.getUrl();
+        String url = storyBean.getPicUrl();
 
         if (!TextUtils.isEmpty(url)) {
             viewHolder.mDrawImg.setImageURI(Uri.parse(url));
+        }else {
+            viewHolder.mDrawImg.setImageURI(null);
         }
         viewHolder.title_story.setText(storyBean.getTitle());
             return convertView;
