@@ -10,4 +10,5 @@
     </array>
     <string name="latest">最新</string>
     <string name="hotst">最热</string>
+    <string name="load_all_data">已加载完所有数据</string>
 </resources>

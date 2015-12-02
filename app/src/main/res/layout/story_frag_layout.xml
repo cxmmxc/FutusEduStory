@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
     <RadioGroup
         android:id="@+id/radio_group"
         android:layout_width="200dip"
         android:layout_height="40dip"
-        android:orientation="horizontal"
-        android:layout_centerHorizontal="true"
         android:layout_margin="10dip"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
         >
 
         <RadioButton
@@ -17,48 +18,34 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:button="@null"
             android:background="@drawable/selector_safe_left"
+            android:button="@null"
             android:checked="true"
-            android:text="@string/latest"
             android:gravity="center"
+            android:text="@string/latest"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             />
+
         <RadioButton
             android:id="@+id/hot_btn"
             android:layout_width="0dip"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:button="@null"
-            android:background="@drawable/selector_safe_right"
             android:layout_marginLeft="-2dip"
-            android:text="@string/hotst"
+            android:layout_weight="1"
+            android:background="@drawable/selector_safe_right"
+            android:button="@null"
             android:gravity="center"
+            android:text="@string/hotst"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             />
     </RadioGroup>
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
-        android:id="@+id/story_pull_list"
+    <FrameLayout
+        android:id="@+id/story_content_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fastScrollEnabled="false"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:smoothScrollbar="true"
-        android:divider="#19000000"
-        android:dividerHeight="4dp"
-        android:layout_below="@id/radio_group"
-        />
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
-        android:layout_centerInParent="true"
-        />
+        android:layout_height="match_parent"/>
 
 
-</RelativeLayout>
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.terry;
 
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.xutils.common.util.LogUtil;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
@@ -64,52 +72,69 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             textview.setText(s);
+//            File file = new File(Environment.getExternalStorageDirectory() + "/futus.txt");
+//
+//            try {
+//                if(!file.exists()) {
+//                    file.createNewFile();
+//                }
+//                FileWriter writer = new FileWriter(file.getAbsolutePath());
+//                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+//                bufferedWriter.write(s);
+//                bufferedWriter.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
         }
 
         @Override
         protected String doInBackground(Void... params) {
             Document document = null;
             try {
-                document = Jsoup.connect("http://www.qbaobei.com/jiaoyu/tj/tjgs/List_38.html").timeout(5000)
-                        .post();
+                document = Jsoup.connect("http://www.qbaobei.com/hot/jiaoyu/tj/tjgs/List_1.html").timeout(9000)
+                        .get();
+                Element element = document.select("ul.list-conBox-ul").first();
+                int toString = element.children().size();
+                LogUtil.v(toString+"");
 //                Elements elements = document.getElementsByClass("ulTextlist_2 clear");
-                Element page = document.select("div.page").first();
-                Elements children = page.children();
-                if(children.size() == 1 && "prev".equals(children.first().attr("class"))) {
-                    Log.i("cxm","the last one");
-                }
-
-                Elements elements = document.select("[class]");
-                for(Element element : elements){
-                    if(element == null){
-                        Log.v("cxm", "null");
-                    }else {
-                        String className = element.className();
-                        if("index-ul".equals(className)) {
-//                            Log.v("cxm", "className="+className+"~~~~~~"+ element.toString()+"\n\n");
-
-                            Elements elements1 = element.select("li");
-                            Log.v("cxm", "size=" + elements1.size());
-                            for (Element child : elements1) {
-                                Element href = child.select("[href]").first();
-                                String name = href.text();
-                                Element img = child.select("img[src]").first();
-                                Log.w("cxm", "href=" + href.attr("href") + " ~~ name=" + name + " ~~ img=");
-                                if(null == img) {
-                                    Log.e("cxm", "img = null");
-
-                                }
-                            }
-//                            Elements children = element.children();
-//                            for( Element child : children) {
-//                                Elements href = child.getElementsByAttribute("href");
-//                                Element first = href.first();
-//                                Log.v("cxm", first.text());
+//                Element page = document.select("div.page").first();
+//                Elements children = page.children();
+//                if(children.size() == 1 && "prev".equals(children.first().attr("class"))) {
+//                    Log.i("cxm","the last one");
+//                }
 //
+//                Elements elements = document.select("[class]");
+//                for(Element element : elements){
+//                    if(element == null){
+//                        Log.v("cxm", "null");
+//                    }else {
+//                        String className = element.className();
+//                        if("index-ul".equals(className)) {
+////                            Log.v("cxm", "className="+className+"~~~~~~"+ element.toString()+"\n\n");
+//
+//                            Elements elements1 = element.select("li");
+//                            Log.v("cxm", "size=" + elements1.size());
+//                            for (Element child : elements1) {
+//                                Element href = child.select("[href]").first();
+//                                String name = href.text();
+//                                Element img = child.select("img[src]").first();
+//                                Log.w("cxm", "href=" + href.attr("href") + " ~~ name=" + name + " ~~ img=");
+//                                if(null == img) {
+//                                    Log.e("cxm", "img = null");
+//                                }
 //                            }
-                        }
-                    }
-                }
+////                            Elements children = element.children();
+////                            for( Element child : children) {
+////                                Elements href = child.getElementsByAttribute("href");
+////                                Element first = href.first();
+////                                Log.v("cxm", first.text());
+////
+////                            }
+//                        }
+//                    }
+//                }
 
             } catch (IOException e) {
                 e.printStackTrace();

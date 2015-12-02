@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.Environment;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.terry.util.ToastAlone;
 
 import org.xutils.DbManager;
 import org.xutils.common.util.LogUtil;
@@ -28,6 +29,7 @@ public class StoryApp extends Application {
     }
 
     private void initData() {
+        ToastAlone.init(this);
         LogUtil.customTagPrefix = "cxm";
         FUTUS_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Futus";
         File futus_file = new File(FUTUS_DIR);
