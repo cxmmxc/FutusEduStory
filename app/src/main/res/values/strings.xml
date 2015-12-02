@@ -8,4 +8,6 @@
         <item >"胎教故事"</item>
         <item >"胎教音乐"</item>
     </array>
+    <string name="latest">最新</string>
+    <string name="hotst">最热</string>
 </resources>

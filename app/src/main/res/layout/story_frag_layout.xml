@@ -3,6 +3,42 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical">
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="200dip"
+        android:layout_height="40dip"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dip"
+        >
+
+        <RadioButton
+            android:id="@+id/latest_btn"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/selector_safe_left"
+            android:checked="true"
+            android:text="@string/latest"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            />
+        <RadioButton
+            android:id="@+id/hot_btn"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/selector_safe_right"
+            android:layout_marginLeft="-2dip"
+            android:text="@string/hotst"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"
+            />
+    </RadioGroup>
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:id="@+id/story_pull_list"
@@ -14,7 +50,7 @@
         android:smoothScrollbar="true"
         android:divider="#19000000"
         android:dividerHeight="4dp"
-        ptrMode="both"
+        android:layout_below="@id/radio_group"
         />
     <ProgressBar
         android:id="@+id/progressbar"
@@ -23,5 +59,6 @@
         style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
         android:layout_centerInParent="true"
         />
+
 
 </RelativeLayout>

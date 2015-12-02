@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.terry.BaseActivity;
 import com.terry.R;
+import com.terry.StoryApp;
 import com.terry.bean.StoryBean;
 import com.terry.util.MeasureTool;
 import com.terry.util.NetUtil;
@@ -24,6 +25,8 @@ import com.terry.util.NetUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 
 import java.io.IOException;
 
@@ -63,7 +66,7 @@ public class StoryDetailActivity extends BaseActivity {
         title = mStoryBean.getTitle();
         int[] screenWH = MeasureTool.getScreenWH(mContext);
 
-        mStyle = "<head><style>img{width:"+screenWH[0]/3+"px !important;}</style></head>";
+        mStyle = "<head><style>img{width:" + screenWH[0] / 3 + "px !important;}</style></head>";
 
         mWebViewSettings = mWebView.getSettings();
         //让缩放显示的最小值为起始
@@ -84,7 +87,22 @@ public class StoryDetailActivity extends BaseActivity {
         }
 //        mWebView.loadUrl(mUrl);
         toolbar.setTitle(title);
-        new UrlTask().execute();
+        try {
+            StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "=", this.title).findFirst();
+            if (bean != null) {
+                LogUtil.v(bean.toString());
+                progressbar.setVisibility(View.GONE);
+                //并且默认存入到本地数据库
+                mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + bean.getContent(), "text/html", "utf-8", null);
+
+            } else {
+
+                new UrlTask().execute();
+            }
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
     }
 
     class UrlTask extends AsyncTask<String, Void, String> {
@@ -123,7 +141,16 @@ public class StoryDetailActivity extends BaseActivity {
 //            progressDialog.dismiss();
 //            text11.setText(s);
 //            Log.w("cxm", s);
-            mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle+s, "text/html", "utf-8", null);
+            mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + s, "text/html", "utf-8", null);
+            try {
+                StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "=", StoryDetailActivity.this.title).findFirst();
+                if (bean == null) {
+                    LogUtil.i(mStoryBean.getContent());
+                    StoryApp.mDbManager.save(mStoryBean);
+                }
+            } catch (DbException e) {
+                e.printStackTrace();
+            }
 //            mWebView.loadData(s, "text/html", "UTF-8");
         }
     }

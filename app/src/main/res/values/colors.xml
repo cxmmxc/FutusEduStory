@@ -16,4 +16,10 @@
     <color name="window_background">@android:color/white</color>
     <color name="footer_bg">#ffbebebe</color>
     <color name="view_spit_bg">#BEB2B2B2</color>
+
+
+    <!-- 网格化安全课堂group的边框线的颜色 -->
+    <color name="wgh_safeschool_frame">#D6D6D6</color>
+    <!-- 网格化安全课堂group的按下状态的填充色 -->
+    <color name="wgh_safeschool_solid_pressed">#4CD964</color>
 </resources>

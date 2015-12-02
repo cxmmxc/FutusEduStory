@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -38,12 +40,17 @@ public class StoryFragment extends BaseFragment {
 
     private View mRootView;
     private PullToRefreshListView story_pull_list;
+    private RadioGroup radio_group;
+    private RadioButton latest_btn, hot_btn;
     private boolean isLastPage;
-    private int mStart = 1;
+    private int mLatestStart = 1;
+    private int mHotStart = 1;
     private StoryContentAdapter mStoryAdapter;
     private ListView mStoryList;
-    private String mBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_"+mStart+".html";
+    private String mLatestBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_" + mLatestStart + ".html";
+    private String mHotBaseUrl = "http://www.qbaobei.com/hot/jiaoyu/tj/tjgs/List_" + mHotStart + ".html";
     private ProgressBar progressbar;
+    private boolean isHotPage;//是否是最热故事,默认是最新故事
 
     @Nullable
     @Override
@@ -61,6 +68,9 @@ public class StoryFragment extends BaseFragment {
         story_pull_list = (PullToRefreshListView) mRootView.findViewById(R.id.story_pull_list);
         mStoryList = story_pull_list.getRefreshableView();
         progressbar = (ProgressBar) mRootView.findViewById(R.id.progressbar);
+        radio_group = (RadioGroup) mRootView.findViewById(R.id.radio_group);
+        latest_btn = (RadioButton) mRootView.findViewById(R.id.latest_btn);
+        hot_btn = (RadioButton) mRootView.findViewById(R.id.hot_btn);
     }
 
     @Override
@@ -73,12 +83,13 @@ public class StoryFragment extends BaseFragment {
             progressbar.setVisibility(View.GONE);
             return;
         }
-        getStoryData();
+        getStoryData(false);
     }
 
 
-    private void getStoryData() {
-        new AsyTask().execute(mBaseUrl);
+    private void getStoryData(boolean isHot) {
+        String url = isHot ? mHotBaseUrl : mLatestBaseUrl;
+        new AsyTask().execute(url);
     }
 
     @Override
@@ -86,30 +97,64 @@ public class StoryFragment extends BaseFragment {
         story_pull_list.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                mStart = 1;
-                new AsyTask().execute(getBaseUrl());
+                if (!isHotPage) {
+                    mLatestStart = 1;
+                } else {
+                    mHotStart = 1;
+                }
+                new AsyTask().execute(getBaseUrl(isHotPage));
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-                mStart++;
-                new AsyTask().execute(getBaseUrl());
+                if (!isHotPage) {
+                    mLatestStart++;
+                } else {
+                    mHotStart ++;
+                }
+                new AsyTask().execute(getBaseUrl(isHotPage));
             }
         });
 
         mStoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                StoryBean storyBean = mStoryAdapter.getItem(position-1);
+                StoryBean storyBean = mStoryAdapter.getItem(position - 1);
                 Intent intent = new Intent(mActivity, StoryDetailActivity.class);
                 intent.putExtra("storyBean", storyBean);
                 startActivity(intent);
             }
         });
+
+        radio_group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.latest_btn:
+                        mLatestStart = 1;
+                        isHotPage = false;
+                        getStoryData(isHotPage);
+                        break;
+                    case R.id.hot_btn:
+                        mHotStart = 1;
+                        isHotPage = true;
+                        getStoryData(isHotPage);
+                        break;
+                }
+            }
+        });
     }
 
-    private String getBaseUrl() {
-        return "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_"+mStart+".html";
+    //ishot，如果是true，表示最热；否则表示最新
+    private String getBaseUrl(boolean isHot) {
+        return isHot ? mHotBaseUrl : mLatestBaseUrl;
+//        if(!isHot) {
+//            return mLatestBaseUrl;
+//        }else {
+//            return mHotBaseUrl;
+//        }
+//        int page = isHot ? mHotStart : mLatestStart;
+//        return "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_" + page + ".html";
     }
 
     class AsyTask extends AsyncTask<String, Void, Document> {
@@ -157,13 +202,19 @@ public class StoryFragment extends BaseFragment {
                             }
                             storyBeans.add(bean);
                         }
-                        if(mStart == 1) {
-                            mStoryAdapter.setData(storyBeans);
-                        } else {
-                            mStoryAdapter.addData(storyBeans);
-
+                        if (!isHotPage) {
+                            if(mLatestStart == 1) {
+                                mStoryAdapter.setData(storyBeans);
+                            } else {
+                                mStoryAdapter.addData(storyBeans);
+                            }
+                        }else {
+                            if(mHotStart == 1) {
+                                mStoryAdapter.setData(storyBeans);
+                            } else {
+                                mStoryAdapter.addData(storyBeans);
+                            }
                         }
-
                     }
                 }
             }
@@ -173,7 +224,7 @@ public class StoryFragment extends BaseFragment {
         protected Document doInBackground(String... params) {
             Document document = null;
             try {
-                document = Jsoup.connect(params[0]).timeout(5000)
+                document = Jsoup.connect(params[0]).timeout(9000)
                         .post();
 //                Elements elements = document.getElementsByClass("ulTextlist_2 clear");
 
