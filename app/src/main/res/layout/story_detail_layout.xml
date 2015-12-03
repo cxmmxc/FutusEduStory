@@ -18,15 +18,17 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:layout_margin="10dip"
+        android:scrollbars="none"
         />
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dip"
+        android:layout_height="50dip"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dip"
         android:background="@drawable/selector_collection"
         android:clickable="true"
+        android:scaleType="centerInside"
         />
     <ProgressBar
         android:id="@+id/progressbar"

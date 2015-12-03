@@ -13,8 +13,8 @@
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
         android:smoothScrollbar="true"
-        android:divider="#19000000"
-        android:dividerHeight="4dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
         />
     <ProgressBar
         android:id="@+id/progressbar"

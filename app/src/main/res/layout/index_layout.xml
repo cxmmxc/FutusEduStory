@@ -23,7 +23,7 @@
             android:choiceMode="singleChoice"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp"
-            android:background="@color/view_spit_bg"
+            android:background="@mipmap/user_center_bg"
             />
 
     </android.support.v4.widget.DrawerLayout>

@@ -125,6 +125,7 @@ public class LatestStoryFragment extends BaseFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressbar.setVisibility(View.VISIBLE);
         }
 
         @Override

@@ -6,6 +6,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -40,6 +41,8 @@ public class IndexActivity extends BaseActivity {
     public final static String STORY_FRAG = "story_frag";
     public final static String MUSIC_FRAG = "music_frag";
 
+    private View mHeaderView;
+
 
     @Override
     protected void initView() {
@@ -51,6 +54,9 @@ public class IndexActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+
+        mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.head_layout, null);
+        left_list.addHeaderView(mHeaderView);
         mToggle = new ActionBarDrawerToggle(this, mDrawlayout, 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -78,7 +84,7 @@ public class IndexActivity extends BaseActivity {
         left_list.setAdapter(mLfetAdapter);
         mLfetAdapter.setData(Arrays.asList(getResources().getStringArray(R.array.drawble_left_list)));
         left_list.setItemChecked(0, true);
-        mCurrentPosition = 0;
+        mCurrentPosition = 1;
 
     }
 
@@ -137,13 +143,18 @@ public class IndexActivity extends BaseActivity {
         left_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (mCurrentPosition == position) {
-                    return;
+                if (position == 0) {
+                    //Head模式
+
+                } else {
+                    if (mCurrentPosition == position) {
+                        return;
+                    }
+                    openOrCloseDrawer();
+                    mCurrentPosition = position;
+                    left_list.setItemChecked(position, true);
+                    EneterFragment(position);
                 }
-                openOrCloseDrawer();
-                mCurrentPosition = position;
-                left_list.setItemChecked(position, true);
-                EneterFragment(position);
             }
         });
 
@@ -159,12 +170,12 @@ public class IndexActivity extends BaseActivity {
 
     private void EneterFragment(int position) {
         switch (position) {
-            case 0:
+            case 1:
                 //进入MainFragment
                 mFragmentManager.onFragmentChanged(STORY_FRAG);
                 toolbar.setTitle(getResources().getString(R.string.futus_story));
                 break;
-            case 1:
+            case 2:
                 //进入分类Fragment
                 mFragmentManager.onFragmentChanged(MUSIC_FRAG);
                 toolbar.setTitle(getResources().getString(R.string.futus_music));

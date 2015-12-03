@@ -60,7 +60,6 @@ public class StoryFragment extends BaseFragment {
         fragmentTransaction.replace(R.id.story_content_layout, latestStoryFragment, LATEST_FRAG);
         fragmentTransaction.commit();
         mMode = FutusMode.LatestMode;
-        ToastAlone.show(R.string.load_all_data);
     }
 
 
