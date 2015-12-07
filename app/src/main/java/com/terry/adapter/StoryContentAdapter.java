@@ -1,6 +1,7 @@
 package com.terry.adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,7 +12,11 @@ import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.terry.R;
+import com.terry.StoryApp;
 import com.terry.bean.StoryBean;
+
+import org.xutils.common.util.LogUtil;
+import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
 
@@ -69,6 +74,17 @@ public class StoryContentAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+        try {
+            StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%"+storyBean.getTitle()+"%").findFirst();
+            if (bean != null) {
+                LogUtil.w(bean.toString());
+                storyBean = bean;
+            }
+
+        } catch (DbException e) {
+            e.printStackTrace();
+        }
+
         String url = storyBean.getPicUrl();
 
         if (!TextUtils.isEmpty(url)) {
@@ -77,6 +93,12 @@ public class StoryContentAdapter extends BaseAdapter {
             viewHolder.mDrawImg.setImageURI(null);
         }
         viewHolder.title_story.setText(storyBean.getTitle());
+        int isRead = storyBean.getIsRead();
+        if (isRead == 0) {
+            viewHolder.title_story.setTextColor(Color.BLACK);
+        }else {
+            viewHolder.title_story.setTextColor(Color.GRAY);
+        }
             return convertView;
         }
 

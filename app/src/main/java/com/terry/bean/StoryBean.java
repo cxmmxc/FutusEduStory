@@ -21,6 +21,10 @@ public class StoryBean implements Serializable {
     private String mContentUrl;
     @Column(name="isCollect")
     private int isCollect;//默认0是未收藏，1是收藏
+    @Column(name = "Content")
+    private String Content;
+    @Column(name = "isRead")//默认0是未读，1是已读
+    private int isRead;
 
     public int getId() {
         return id;
@@ -46,8 +50,6 @@ public class StoryBean implements Serializable {
         Content = content;
     }
 
-    @Column(name="Content")
-    private String Content;
 
     public String getmContentUrl() {
         return mContentUrl;
@@ -73,6 +75,14 @@ public class StoryBean implements Serializable {
         this.title = title;
     }
 
+    public int getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(int isRead) {
+        this.isRead = isRead;
+    }
+
     @Override
     public String toString() {
         return "StoryBean{" +
@@ -82,6 +92,7 @@ public class StoryBean implements Serializable {
                 ", mContentUrl='" + mContentUrl + '\'' +
                 ", isCollect=" + isCollect +
                 ", Content='" + Content + '\'' +
+                ", isRead=" + isRead +
                 '}';
     }
 }

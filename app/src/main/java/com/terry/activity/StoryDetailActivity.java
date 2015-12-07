@@ -1,5 +1,6 @@
 package com.terry.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -80,15 +81,11 @@ public class StoryDetailActivity extends BaseActivity {
 //        mWebViewSettings.setUseWideViewPort(true);
 //        mWebViewSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 //        mWebViewSettings.setLoadWithOverviewMode(true);
-//判断是否有网
-        if (!NetUtil.isNetworkAvailable(this)) {
-            progressbar.setVisibility(View.GONE);
-            return;
-        }
+
 //        mWebView.loadUrl(mUrl);
         toolbar.setTitle(title);
         try {
-            StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "=", this.title).findFirst();
+            StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%"+this.title+"%").findFirst();
             if (bean != null) {
                 LogUtil.v(bean.toString());
                 progressbar.setVisibility(View.GONE);
@@ -96,7 +93,11 @@ public class StoryDetailActivity extends BaseActivity {
                 mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + bean.getContent(), "text/html", "utf-8", null);
 
             } else {
-
+//判断是否有网
+                if (!NetUtil.isNetworkAvailable(this)) {
+                    progressbar.setVisibility(View.GONE);
+                    return;
+                }
                 new UrlTask().execute();
             }
         } catch (DbException e) {
@@ -121,12 +122,10 @@ public class StoryDetailActivity extends BaseActivity {
             try {
                 document = Jsoup.connect(mUrl).timeout(8000).get();
                 first = document.select("div.news-artbody").first();
-                Log.v("cxm", first.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (first != null) {
-                Log.v("cxm", "doc != null");
                 return first.html();
             }
             return null;
@@ -137,13 +136,14 @@ public class StoryDetailActivity extends BaseActivity {
             super.onPostExecute(s);
             progressbar.setVisibility(View.GONE);
             mStoryBean.setContent(s);
+            mStoryBean.setIsRead(1);
             //并且默认存入到本地数据库
 //            progressDialog.dismiss();
 //            text11.setText(s);
 //            Log.w("cxm", s);
             mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + s, "text/html", "utf-8", null);
             try {
-                StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "=", StoryDetailActivity.this.title).findFirst();
+                StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%"+StoryDetailActivity.this.title+"%").findFirst();
                 if (bean == null) {
                     LogUtil.i(mStoryBean.getContent());
                     StoryApp.mDbManager.save(mStoryBean);
@@ -184,9 +184,16 @@ public class StoryDetailActivity extends BaseActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setResult(Activity.RESULT_OK);
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 
     @Override

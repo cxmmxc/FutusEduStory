@@ -1,8 +1,11 @@
 package com.terry.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -28,6 +32,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -46,6 +54,9 @@ public class LatestStoryFragment extends BaseFragment {
     private String mLatestBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_" + mLatestStart
             + ".html";
     private ProgressBar progressbar;
+    private final static int STORY_REQUEST_CODE = 10;
+
+    private int mClickItemPosition = -1;
 
     @Nullable
     @Override
@@ -106,12 +117,25 @@ public class LatestStoryFragment extends BaseFragment {
         mStoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mClickItemPosition = position;
                 StoryBean storyBean = mStoryAdapter.getItem(position - 1);
                 Intent intent = new Intent(mActivity, StoryDetailActivity.class);
                 intent.putExtra("storyBean", storyBean);
-                startActivity(intent);
+                startActivityForResult(intent, STORY_REQUEST_CODE);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
+            //如果是已读的话，更新整个数据源
+            if (mClickItemPosition != -1) {
+                View view = mStoryList.getChildAt(mClickItemPosition);
+                TextView txtView = (TextView) view.findViewById(R.id.title_story);
+                txtView.setTextColor(Color.GRAY);
+            }
+        }
     }
 
     //ishot，如果是true，表示最热；否则表示最新
@@ -132,6 +156,21 @@ public class LatestStoryFragment extends BaseFragment {
         protected void onPostExecute(Document document) {
             super.onPostExecute(document);
             story_pull_list.onRefreshComplete();
+                        File file = new File(Environment.getExternalStorageDirectory() + "/Latest12071513.txt");
+
+            try {
+                if(!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter writer = new FileWriter(file.getAbsolutePath());
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                bufferedWriter.write(document.toString());
+                bufferedWriter.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             Element page = document.select("div.page").first();
             Elements children = page.children();
             if (children.size() == 1 && "prev".equals(children.first().attr("class"))) {
