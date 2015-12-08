@@ -1,29 +1,29 @@
 package com.terry.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.terry.BaseActivity;
 import com.terry.R;
-import com.terry.adapter.LeftListAdapter;
 import com.terry.fragment.MusicFragment;
 import com.terry.fragment.StoryFragment;
 import com.terry.util.FragmentChangeManager;
 
-import java.util.Arrays;
-
 /**
  * Created by jl02 on 2015/11/25.
  */
-public class IndexActivity extends BaseActivity {
+public class IndexActivity extends BaseActivity implements View.OnClickListener{
 
     private DrawerLayout mDrawlayout;
 
@@ -31,32 +31,42 @@ public class IndexActivity extends BaseActivity {
 
     private Toolbar toolbar;
 
-    private ListView left_list;
-
-    private LeftListAdapter mLfetAdapter;
-    private int mCurrentPosition;
+    private LinearLayout left_list;
+//
+//    private LeftListAdapter mLfetAdapter;
+//    private int mCurrentPosition;
 
     private FragmentChangeManager mFragmentManager;
 
     public final static String STORY_FRAG = "story_frag";
     public final static String MUSIC_FRAG = "music_frag";
 
-    private View mHeaderView;
+//    private View mHeaderView;
 
+    private RelativeLayout head_layout;
+    private SimpleDraweeView head_img;
+    private TextView name_text, story_text, music_text, uploadfile_text;
 
     @Override
     protected void initView() {
         setContentView(R.layout.index_layout);
         mDrawlayout = (DrawerLayout) findViewById(R.id.mDrawlayout);
-        left_list = (ListView) findViewById(R.id.left_list);
+//        left_list = (ListView) findViewById(R.id.left_list);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        head_layout = (RelativeLayout) findViewById(R.id.head_layout);
+        head_img = (SimpleDraweeView) findViewById(R.id.head_img);
+        name_text = (TextView) findViewById(R.id.name_text);
+        story_text = (TextView) findViewById(R.id.story_text);
+        music_text = (TextView) findViewById(R.id.music_text);
+        uploadfile_text = (TextView) findViewById(R.id.uploadfile_text);
+        left_list = (LinearLayout) findViewById(R.id.left_list);
     }
 
     @Override
     protected void initData() {
 
-        mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.head_layout, null);
-        left_list.addHeaderView(mHeaderView);
+//        mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.head_layout, null);
+//        left_list.addHeaderView(mHeaderView);
         mToggle = new ActionBarDrawerToggle(this, mDrawlayout, 0, 0) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -80,11 +90,11 @@ public class IndexActivity extends BaseActivity {
         mFragmentManager.addFragment(MUSIC_FRAG, MusicFragment.class, null);
         mFragmentManager.onFragmentChanged(STORY_FRAG);
 
-        mLfetAdapter = new LeftListAdapter(mContext);
-        left_list.setAdapter(mLfetAdapter);
-        mLfetAdapter.setData(Arrays.asList(getResources().getStringArray(R.array.drawble_left_list)));
-        left_list.setItemChecked(0, true);
-        mCurrentPosition = 1;
+//        mLfetAdapter = new LeftListAdapter(mContext);
+//        left_list.setAdapter(mLfetAdapter);
+//        mLfetAdapter.setData(Arrays.asList(getResources().getStringArray(R.array.drawble_left_list)));
+//        left_list.setItemChecked(0, true);
+//        mCurrentPosition = 1;
 
     }
 
@@ -140,23 +150,29 @@ public class IndexActivity extends BaseActivity {
 
     @Override
     protected void setListener() {
-        left_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
-                    //Head模式
+//        left_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                if (position == 0) {
+//                    //Head模式
+//
+//
+//                } else {
+//                    if (mCurrentPosition == position) {
+//                        return;
+//                    }
+//                    openOrCloseDrawer();
+//                    mCurrentPosition = position;
+//                    left_list.setItemChecked(position, true);
+//                    EneterFragment(position);
+//                }
+//            }
+//        });
 
-                } else {
-                    if (mCurrentPosition == position) {
-                        return;
-                    }
-                    openOrCloseDrawer();
-                    mCurrentPosition = position;
-                    left_list.setItemChecked(position, true);
-                    EneterFragment(position);
-                }
-            }
-        });
+        head_layout.setOnClickListener(this);
+        story_text.setOnClickListener(this);
+        music_text.setOnClickListener(this);
+        uploadfile_text.setOnClickListener(this);
 
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -172,11 +188,13 @@ public class IndexActivity extends BaseActivity {
         switch (position) {
             case 1:
                 //进入MainFragment
+                openOrCloseDrawer();
                 mFragmentManager.onFragmentChanged(STORY_FRAG);
                 toolbar.setTitle(getResources().getString(R.string.futus_story));
                 break;
             case 2:
                 //进入分类Fragment
+                openOrCloseDrawer();
                 mFragmentManager.onFragmentChanged(MUSIC_FRAG);
                 toolbar.setTitle(getResources().getString(R.string.futus_music));
                 break;
@@ -187,5 +205,31 @@ public class IndexActivity extends BaseActivity {
     protected void initToolbar() {
         super.initToolbar(toolbar);
         toolbar.setTitle(R.string.futus_story);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.head_layout:
+                //未登录,进入登录页面
+                if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
+                    Intent itent = new Intent(mContext, LoginActivity.class);
+                    startActivity(itent);
+                } else {
+
+                    //进入用户详情页面
+                }
+                break;
+            case R.id.story_text:
+                EneterFragment(1);
+                break;
+            case R.id.music_text:
+                EneterFragment(2);
+                break;
+            case R.id.uploadfile_text:
+                //进入上传文件页面，仅作者可见
+                break;
+
+        }
     }
 }

@@ -22,4 +22,6 @@
     <color name="wgh_safeschool_frame">#D6D6D6</color>
     <!-- 网格化安全课堂group的按下状态的填充色 -->
     <color name="wgh_safeschool_solid_pressed">#4CD964</color>
+
+    <color name="half_tras_gray">#33bebebe</color>
 </resources>

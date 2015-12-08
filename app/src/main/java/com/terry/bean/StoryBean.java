@@ -5,11 +5,13 @@ import org.xutils.db.annotation.Table;
 
 import java.io.Serializable;
 
+import cn.bmob.v3.BmobObject;
+
 /**
  * Created by lmz_cxm on 2015/11/28.
  */
 @Table(name="StoryBean")
-public class StoryBean implements Serializable {
+public class StoryBean extends BmobObject {
 
     @Column(name = "id", isId = true)
     private int id;
@@ -25,6 +27,16 @@ public class StoryBean implements Serializable {
     private String Content;
     @Column(name = "isRead")//默认0是未读，1是已读
     private int isRead;
+
+    public String getPersonObjId() {
+        return personObjId;
+    }
+
+    public void setPersonObjId(String personObjId) {
+        this.personObjId = personObjId;
+    }
+
+    private String personObjId;//对应的用户的personId，用于收藏用
 
     public int getId() {
         return id;

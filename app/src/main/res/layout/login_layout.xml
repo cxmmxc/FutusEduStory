@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:background="@color/title_bg"
+        >
+        <ImageView
+            android:id="@+id/back_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/back_img"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dip"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:text="@string/login"
+            android:layout_centerInParent="true"
+            />
+
+    </RelativeLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="55dip"
+        android:background="@drawable/pic_btn_bg"
+        android:layout_marginTop="50dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:drawableLeft="@mipmap/login_icon_account"
+        android:drawablePadding="15dip"
+        android:paddingLeft="10dip"
+        android:gravity="center_vertical|left"
+        android:hint="请输入账号,13位以内"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="55dip"
+        android:background="@drawable/pic_btn_bg"
+        android:layout_marginTop="30dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:drawableLeft="@mipmap/login_icon_password"
+        android:drawablePadding="15dip"
+        android:paddingLeft="10dip"
+        android:gravity="center_vertical|left"
+        android:hint="请输入密码,大于6位"
+        />
+
+    <TextView
+        android:id="@+id/login_text"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginTop="40dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:text="@string/login"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/login_bg"
+        />
+
+</LinearLayout>

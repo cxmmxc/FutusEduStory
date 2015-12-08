@@ -1,6 +1,8 @@
 package com.terry.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -50,6 +53,8 @@ public class HotStoryFragment extends BaseFragment {
     private String mHotBaseUrl = "http://www.qbaobei.com/hot/jiaoyu/tj/tjgs/List_" + mHotStart
             + ".html";
     private ProgressBar progressbar;
+    private final static int STORY_REQUEST_CODE = 11;
+    private int mClickItemPosition = -1;
 
     @Nullable
     @Override
@@ -110,12 +115,25 @@ public class HotStoryFragment extends BaseFragment {
         mStoryList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mClickItemPosition = position;
                 StoryBean storyBean = mStoryAdapter.getItem(position - 1);
                 Intent intent = new Intent(mActivity, StoryDetailActivity.class);
                 intent.putExtra("storyBean", storyBean);
-                startActivity(intent);
+                startActivityForResult(intent, STORY_REQUEST_CODE);
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
+            //如果是已读的话，更新整个数据源
+            if (mClickItemPosition != -1) {
+                View view = mStoryList.getChildAt(mClickItemPosition - mStoryList.getFirstVisiblePosition());
+                TextView txtView = (TextView) view.findViewById(R.id.title_story);
+                txtView.setTextColor(Color.GRAY);
+            }
+        }
     }
 
     //ishot，如果是true，表示最热；否则表示最新

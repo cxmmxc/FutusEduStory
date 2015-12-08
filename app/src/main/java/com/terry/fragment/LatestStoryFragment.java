@@ -131,7 +131,7 @@ public class LatestStoryFragment extends BaseFragment {
         if(resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
             //如果是已读的话，更新整个数据源
             if (mClickItemPosition != -1) {
-                View view = mStoryList.getChildAt(mClickItemPosition);
+                View view = mStoryList.getChildAt(mClickItemPosition - mStoryList.getFirstVisiblePosition());
                 TextView txtView = (TextView) view.findViewById(R.id.title_story);
                 txtView.setTextColor(Color.GRAY);
             }

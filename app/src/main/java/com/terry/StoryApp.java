@@ -12,6 +12,8 @@ import org.xutils.x;
 
 import java.io.File;
 
+import cn.bmob.v3.Bmob;
+
 /**
  * Created by lmz_cxm on 2015/11/28.
  */
@@ -29,6 +31,8 @@ public class StoryApp extends Application {
     }
 
     private void initData() {
+        //初始化Bob
+        Bmob.initialize(this, "c7837cb415200d2068b60ef6e2c2d62e");
         ToastAlone.init(this);
         LogUtil.customTagPrefix = "cxm";
         FUTUS_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Futus";

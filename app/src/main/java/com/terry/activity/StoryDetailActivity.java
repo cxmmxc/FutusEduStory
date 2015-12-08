@@ -1,18 +1,17 @@
 package com.terry.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v7.widget.Toolbar;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -22,6 +21,7 @@ import com.terry.StoryApp;
 import com.terry.bean.StoryBean;
 import com.terry.util.MeasureTool;
 import com.terry.util.NetUtil;
+import com.terry.util.ToastAlone;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -30,6 +30,12 @@ import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 
 import java.io.IOException;
+import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.DeleteListener;
+import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.SaveListener;
 
 /**
  * Created by lmz_cxm on 2015/11/29.
@@ -46,6 +52,9 @@ public class StoryDetailActivity extends BaseActivity {
     private TextView text11;
     private WebSettings mWebViewSettings;
     private String mStyle;
+    private ImageView collect_img;
+    private boolean isCollected;
+    private String mCollectObjId;
 
     @Override
     protected void initView() {
@@ -53,6 +62,7 @@ public class StoryDetailActivity extends BaseActivity {
         mWebView = (WebView) findViewById(R.id.mWebView);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         progressbar = (ProgressBar) findViewById(R.id.progressbar);
+        collect_img = (ImageView) findViewById(R.id.collect_img);
 //        text11 = (TextView) findViewById(R.id.text11);
 //        text11.setMovementMethod(ScrollingMovementMethod.getInstance());
     }
@@ -85,7 +95,7 @@ public class StoryDetailActivity extends BaseActivity {
 //        mWebView.loadUrl(mUrl);
         toolbar.setTitle(title);
         try {
-            StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%"+this.title+"%").findFirst();
+            StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%" + this.title + "%").findFirst();
             if (bean != null) {
                 LogUtil.v(bean.toString());
                 progressbar.setVisibility(View.GONE);
@@ -102,6 +112,25 @@ public class StoryDetailActivity extends BaseActivity {
             }
         } catch (DbException e) {
             e.printStackTrace();
+        }
+        if (!TextUtils.isEmpty(spUtil.getPersonObjid())) {
+            //已经登录了，就去查询是否已收藏到Bmob
+            BmobQuery<StoryBean> storyBeanBmobQuery = new BmobQuery<StoryBean>();
+            storyBeanBmobQuery.addWhereEqualTo("title", this.title);
+            storyBeanBmobQuery.findObjects(this, new FindListener<StoryBean>() {
+                @Override
+                public void onSuccess(List<StoryBean> list) {
+                    mCollectObjId = list.get(0).getObjectId();
+                    //证明已收藏
+                    collect_img.setBackgroundResource(R.drawable.selector_collected);
+                    isCollected = true;
+                }
+
+                @Override
+                public void onError(int i, String s) {
+                    isCollected = false;
+                }
+            });
         }
 
     }
@@ -143,7 +172,7 @@ public class StoryDetailActivity extends BaseActivity {
 //            Log.w("cxm", s);
             mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + s, "text/html", "utf-8", null);
             try {
-                StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%"+StoryDetailActivity.this.title+"%").findFirst();
+                StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%" + StoryDetailActivity.this.title + "%").findFirst();
                 if (bean == null) {
                     LogUtil.i(mStoryBean.getContent());
                     StoryApp.mDbManager.save(mStoryBean);
@@ -186,6 +215,54 @@ public class StoryDetailActivity extends BaseActivity {
             public void onClick(View v) {
                 setResult(Activity.RESULT_OK);
                 finish();
+            }
+        });
+
+        collect_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isCollected) {
+                    //取消收藏
+                    mStoryBean.setObjectId(mCollectObjId);
+                    mStoryBean.delete(mContext, new DeleteListener() {
+                        @Override
+                        public void onSuccess() {
+                            isCollected = false;
+                            ToastAlone.show(R.string.collect_cancel);
+                        }
+
+                        @Override
+                        public void onFailure(int i, String s) {
+                            isCollected = true;
+                            ToastAlone.show(R.string.collect_cancel_fail);
+                        }
+                    });
+                } else {
+                    //收藏
+                    if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
+                        //去登录页面进行登录
+
+                    } else {
+                        //直接就收藏了
+                        mStoryBean.setIsCollect(1);
+                        mStoryBean.setPersonObjId(spUtil.getPersonObjid());
+                        mStoryBean.save(mContext, new SaveListener() {
+                            @Override
+                            public void onSuccess() {
+                                //收藏成功
+                                ToastAlone.show(R.string.collect_success);
+                            }
+
+                            @Override
+                            public void onFailure(int i, String s) {
+                                //收藏成功
+                                ToastAlone.show(R.string.collect_fail);
+                            }
+                        });
+                    }
+
+
+                }
             }
         });
     }

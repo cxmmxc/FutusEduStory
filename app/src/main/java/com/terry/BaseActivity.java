@@ -10,16 +10,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
+import com.terry.util.SpUtil;
 
 /**
  * Created by jl02 on 2015/11/27.
  */
 public abstract class BaseActivity extends AppCompatActivity {
     protected Activity mContext;
+    protected SpUtil spUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        spUtil = SpUtil.getInstance(this);
         initWindow();
         initView();
         initToolbar();
