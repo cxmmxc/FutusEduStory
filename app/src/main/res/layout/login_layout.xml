@@ -28,6 +28,7 @@
     </RelativeLayout>
 
     <EditText
+        android:id="@+id/username_edittext"
         android:layout_width="match_parent"
         android:layout_height="55dip"
         android:background="@drawable/pic_btn_bg"
@@ -39,9 +40,11 @@
         android:paddingLeft="10dip"
         android:gravity="center_vertical|left"
         android:hint="请输入账号,13位以内"
+        android:inputType="text"
         />
 
     <EditText
+        android:id="@+id/password_edittext"
         android:layout_width="match_parent"
         android:layout_height="55dip"
         android:background="@drawable/pic_btn_bg"
@@ -53,6 +56,7 @@
         android:paddingLeft="10dip"
         android:gravity="center_vertical|left"
         android:hint="请输入密码,大于6位"
+        android:inputType="textPassword"
         />
 
     <TextView
@@ -67,6 +71,21 @@
         android:textSize="20sp"
         android:textColor="@android:color/white"
         android:background="@drawable/login_bg"
+        />
+
+
+    <TextView
+        android:id="@+id/regist_text"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:layout_marginTop="20dip"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:text="@string/regist"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/common_btn_red_normal"
         />
 
 </LinearLayout>

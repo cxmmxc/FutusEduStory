@@ -1,6 +1,7 @@
 package com.terry.bean;
 
 import cn.bmob.v3.BmobObject;
+import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 
 /**
@@ -8,41 +9,15 @@ import cn.bmob.v3.datatype.BmobFile;
  * 邮箱：herewinner@163.com
  * 描述：Person类，同步到Bmob服务器
  */
-public class Person extends BmobObject {
-    private String name;
-    private String pass;
-    private BmobFile headPic;
-    private String email;
+public class Person extends BmobUser {
+    private String headPicUrl;
 
-    public String getName() {
-        return name;
+
+    public String getHeadPic() {
+        return headPicUrl;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPass() {
-        return pass;
-    }
-
-    public void setPass(String pass) {
-        this.pass = pass;
-    }
-
-    public BmobFile getHeadPic() {
-        return headPic;
-    }
-
-    public void setHeadPic(BmobFile headPic) {
-        this.headPic = headPic;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setHeadPic(String headPicUrl) {
+        this.headPicUrl = headPicUrl;
     }
 }

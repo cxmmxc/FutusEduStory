@@ -17,4 +17,9 @@
     <string name="collect_cancel">收藏已取消</string>
     <string name="collect_cancel_fail">收藏取消失败</string>
     <string name="login">登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_fail">登录失败</string>
+    <string name="regist">注册</string>
+    <string name="regist_success">注册成功</string>
+    <string name="regist_fail">注册失败</string>
 </resources>
