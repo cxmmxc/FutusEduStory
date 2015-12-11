@@ -11,6 +11,8 @@ import com.terry.R;
 import com.terry.bean.Person;
 import com.terry.util.ToastAlone;
 
+import org.xutils.common.util.LogUtil;
+
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.SaveListener;
 
@@ -82,12 +84,18 @@ public class RegisterActivity extends BaseActivity {
             public void onSuccess() {
                 spUtil.setPersonObjId(person.getObjectId());
                 spUtil.setPersonName(person.getUsername());
+                spUtil.setPersonHead(person.getHeadPic());
+                spUtil.setPersonEmail(person.getEmail());
+                spUtil.setPersonPhone(person.getMobilePhoneNumber());
+                LogUtil.w("objId="+person.getObjectId());
                 ToastAlone.show(R.string.regist_success);
+                setResult(RESULT_OK);
+                finish();
             }
 
             @Override
             public void onFailure(int i, String s) {
-                ToastAlone.show(R.string.regist_fail);
+                ToastAlone.show(s);
             }
         });
     }

@@ -12,7 +12,14 @@ import com.terry.BaseActivity;
 import com.terry.R;
 import com.terry.bean.Person;
 import com.terry.util.ToastAlone;
+import com.terry.view.GifLoadingDialog;
 
+import org.xutils.common.util.LogUtil;
+
+import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
 
 /**
@@ -26,6 +33,8 @@ public class LoginActivity extends BaseActivity {
     private final static int REGIST_REQUEST_CODE = 100;
     private EditText username_edittext, password_edittext;
 
+    private String username;
+    private GifLoadingDialog dialog;
     @Override
     protected void initView() {
         setContentView(R.layout.login_layout);
@@ -39,6 +48,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        dialog = new GifLoadingDialog(mContext, -1);
     }
 
     @Override
@@ -61,7 +71,7 @@ public class LoginActivity extends BaseActivity {
         login_text.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = username_edittext.getEditableText().toString();
+                username = username_edittext.getEditableText().toString();
                 String password = password_edittext.getEditableText().toString();
                 if (TextUtils.isEmpty(username)) {
                     ToastAlone.show("用户名不能为空");
@@ -72,6 +82,7 @@ public class LoginActivity extends BaseActivity {
                 }else if (password.length() > 20) {
                     ToastAlone.show("密码不能超过20位");
                 }else {
+                    dialog.show();
                     Person person = new Person();
                     person.setUsername(username);
                     person.setPassword(password);
@@ -81,18 +92,46 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    private void loginPerson(Person person) {
+    private void loginPerson(final Person person) {
         person.login(mContext, new SaveListener() {
             @Override
             public void onSuccess() {
-                ToastAlone.show(R.string.login_success);
+                queryUserInfo();
             }
 
             @Override
             public void onFailure(int i, String s) {
-
+                dialog.dismiss();
             }
         });
+    }
+
+    private void queryUserInfo() {
+        BmobQuery<Person> persons = new BmobQuery<Person>();
+        persons.addWhereEqualTo("username", username);
+        persons.findObjects(mContext, new FindListener<Person>() {
+            @Override
+            public void onSuccess(List<Person> list) {
+                dialog.dismiss();
+                Person person = list.get(0);
+                ToastAlone.show(R.string.login_success);
+                spUtil.setPersonObjId(person.getObjectId());
+                spUtil.setPersonName(person.getUsername());
+                spUtil.setPersonHead(person.getHeadPic());
+                spUtil.setPersonEmail(person.getEmail());
+                spUtil.setPersonPhone(person.getMobilePhoneNumber());
+                //登录成功，进行查询操作
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                dialog.dismiss();
+                ToastAlone.show(s);
+            }
+        });
+
     }
 
     @Override
@@ -103,6 +142,8 @@ public class LoginActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && requestCode == REGIST_REQUEST_CODE) {
             //证明成功了
+            setResult(RESULT_OK);
+            finish();
         }
     }
 }

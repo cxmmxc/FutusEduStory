@@ -2,6 +2,7 @@ package com.terry.activity;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -47,6 +48,8 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
     private SimpleDraweeView head_img;
     private TextView name_text, story_text, music_text, uploadfile_text;
 
+    private final static int LOGIN_CODE = 13;
+    private final static int USER_CODE = 14;
     @Override
     protected void initView() {
         setContentView(R.layout.index_layout);
@@ -65,6 +68,18 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void initData() {
 
+        if (TextUtils.isEmpty(spUtil.getPersonName())) {
+            name_text.setText("点击登录");
+        }else {
+            name_text.setText(spUtil.getPersonName());
+        }
+
+        if (TextUtils.isEmpty(spUtil.getPersonHead())) {
+            head_img.setImageURI(Uri.parse("res:///"+R.mipmap.setting_head_icon));
+        }else {
+            head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
+        }
+
 //        mHeaderView = LayoutInflater.from(mContext).inflate(R.layout.head_layout, null);
 //        left_list.addHeaderView(mHeaderView);
         mToggle = new ActionBarDrawerToggle(this, mDrawlayout, 0, 0) {
@@ -80,6 +95,7 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
                 invalidateOptionsMenu();
             }
         };
+
 
         mToggle.setDrawerIndicatorEnabled(true);
         mDrawlayout.setDrawerListener(mToggle);
@@ -214,10 +230,11 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
                 //未登录,进入登录页面
                 if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
                     Intent itent = new Intent(mContext, LoginActivity.class);
-                    startActivity(itent);
+                    startActivityForResult(itent, LOGIN_CODE);
                 } else {
-
                     //进入用户详情页面
+                    Intent intent = new Intent(mContext, UseActivity.class);
+                    startActivityForResult(intent, USER_CODE);
                 }
                 break;
             case R.id.story_text:
@@ -230,6 +247,32 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
                 //进入上传文件页面，仅作者可见
                 break;
 
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == LOGIN_CODE) {
+                name_text.setText(spUtil.getPersonName());
+                if (TextUtils.isEmpty(spUtil.getPersonHead())) {
+                    head_img.setImageURI(Uri.parse("res:///"+R.mipmap.setting_head_icon));
+                }else {
+                    head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
+                }
+            }else if (requestCode == USER_CODE) {
+                //判断是否有修改，有修改，则更新头像以及name信息
+                if (TextUtils.isEmpty(spUtil.getPersonName())) {
+                    name_text.setText("点击登录");
+                }else {
+                    name_text.setText(spUtil.getPersonName());
+                }
+                if (TextUtils.isEmpty(spUtil.getPersonHead())) {
+                    head_img.setImageURI(Uri.parse("res:///" + R.mipmap.setting_head_icon));
+                } else {
+                    head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
+                }
+            }
         }
     }
 }

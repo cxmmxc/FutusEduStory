@@ -29,6 +29,9 @@ public class SpUtil {
 
     private final static String PERSON_OBJID = "person_objid";
     private final static String PERSON_NAME = "person_name";
+    private final static String PERSON_HEAD = "person_head";
+    private final static String PERSON_EMAIL = "person_email";
+    private final static String PERSON_PHONE = "person_phone";
 
     //存储获取Personid
     public void setPersonObjId(String objId) {
@@ -48,6 +51,37 @@ public class SpUtil {
 
     public String getPersonName() {
         return spInfo.getString(PERSON_NAME, "");
+    }
+
+    //存储获取PersonHeadUrl
+    public void setPersonHead(String headUrl) {
+        mEditor.putString(PERSON_HEAD, headUrl);
+        mEditor.commit();
+    }
+
+    public String getPersonHead() {
+        return spInfo.getString(PERSON_HEAD, "");
+    }
+
+    //存储获取PersonEmail
+    public void setPersonEmail(String email) {
+        mEditor.putString(PERSON_EMAIL, email);
+        mEditor.commit();
+    }
+
+    public String getPersonEmail() {
+        return spInfo.getString(PERSON_EMAIL, "");
+    }
+
+
+    //存储获取PersonPhone
+    public void setPersonPhone(String phone) {
+        mEditor.putString(PERSON_PHONE, phone);
+        mEditor.commit();
+    }
+
+    public String getPersonPhone() {
+        return spInfo.getString(PERSON_PHONE, "");
     }
 
 
