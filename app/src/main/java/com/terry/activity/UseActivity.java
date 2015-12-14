@@ -1,6 +1,7 @@
 package com.terry.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -75,7 +76,8 @@ public class UseActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //进入我的收藏页面
-
+                Intent intent = new Intent(mContext, CollectActivity.class);
+                startActivity(intent);
             }
         });
 

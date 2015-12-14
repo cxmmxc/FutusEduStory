@@ -253,26 +253,44 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-            if (requestCode == LOGIN_CODE) {
-                name_text.setText(spUtil.getPersonName());
-                if (TextUtils.isEmpty(spUtil.getPersonHead())) {
-                    head_img.setImageURI(Uri.parse("res:///"+R.mipmap.setting_head_icon));
-                }else {
-                    head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
-                }
-            }else if (requestCode == USER_CODE) {
-                //判断是否有修改，有修改，则更新头像以及name信息
-                if (TextUtils.isEmpty(spUtil.getPersonName())) {
-                    name_text.setText("点击登录");
-                }else {
-                    name_text.setText(spUtil.getPersonName());
-                }
-                if (TextUtils.isEmpty(spUtil.getPersonHead())) {
-                    head_img.setImageURI(Uri.parse("res:///" + R.mipmap.setting_head_icon));
-                } else {
-                    head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
-                }
-            }
+//            if (requestCode == LOGIN_CODE) {
+//                name_text.setText(spUtil.getPersonName());
+//                if (TextUtils.isEmpty(spUtil.getPersonHead())) {
+//                    head_img.setImageURI(Uri.parse("res:///"+R.mipmap.setting_head_icon));
+//                }else {
+//                    head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
+//                }
+//            }else if (requestCode == USER_CODE) {
+//                //判断是否有修改，有修改，则更新头像以及name信息
+//                if (TextUtils.isEmpty(spUtil.getPersonName())) {
+//                    name_text.setText("点击登录");
+//                }else {
+//                    name_text.setText(spUtil.getPersonName());
+//                }
+//                if (TextUtils.isEmpty(spUtil.getPersonHead())) {
+//                    head_img.setImageURI(Uri.parse("res:///" + R.mipmap.setting_head_icon));
+//                } else {
+//                    head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
+//                }
+//            }else {
+                super.onActivityResult(requestCode, resultCode, data);
+//            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //判断是否有修改，有修改，则更新头像以及name信息
+        if (TextUtils.isEmpty(spUtil.getPersonName())) {
+            name_text.setText("点击登录");
+        }else {
+            name_text.setText(spUtil.getPersonName());
+        }
+        if (TextUtils.isEmpty(spUtil.getPersonHead())) {
+            head_img.setImageURI(Uri.parse("res:///" + R.mipmap.setting_head_icon));
+        } else {
+            head_img.setImageURI(Uri.parse(spUtil.getPersonHead()));
         }
     }
 }

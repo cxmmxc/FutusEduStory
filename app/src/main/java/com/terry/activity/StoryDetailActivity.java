@@ -1,6 +1,7 @@
 package com.terry.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.v7.widget.Toolbar;
@@ -53,7 +54,7 @@ public class StoryDetailActivity extends BaseActivity {
     private WebSettings mWebViewSettings;
     private String mStyle;
     private ImageView collect_img;
-    private boolean isCollected;
+    private boolean isCollected;//是否已收藏
     private String mCollectObjId;
 
     @Override
@@ -97,7 +98,8 @@ public class StoryDetailActivity extends BaseActivity {
         try {
             StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%" + this.title + "%").findFirst();
             if (bean != null) {
-                LogUtil.v(bean.toString());
+//                LogUtil.v(bean.toString());
+                mStoryBean = bean;
                 progressbar.setVisibility(View.GONE);
                 //并且默认存入到本地数据库
                 mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + bean.getContent(), "text/html", "utf-8", null);
@@ -115,24 +117,28 @@ public class StoryDetailActivity extends BaseActivity {
         }
         if (!TextUtils.isEmpty(spUtil.getPersonObjid())) {
             //已经登录了，就去查询是否已收藏到Bmob
-            BmobQuery<StoryBean> storyBeanBmobQuery = new BmobQuery<StoryBean>();
-            storyBeanBmobQuery.addWhereEqualTo("title", this.title);
-            storyBeanBmobQuery.findObjects(this, new FindListener<StoryBean>() {
-                @Override
-                public void onSuccess(List<StoryBean> list) {
-                    mCollectObjId = list.get(0).getObjectId();
-                    //证明已收藏
-                    collect_img.setBackgroundResource(R.drawable.selector_collected);
-                    isCollected = true;
-                }
-
-                @Override
-                public void onError(int i, String s) {
-                    isCollected = false;
-                }
-            });
+            getMobBeanId();
         }
 
+    }
+
+    private void getMobBeanId() {
+        BmobQuery<StoryBean> storyBeanBmobQuery = new BmobQuery<StoryBean>();
+        storyBeanBmobQuery.addWhereEqualTo("title", this.title);
+        storyBeanBmobQuery.findObjects(this, new FindListener<StoryBean>() {
+            @Override
+            public void onSuccess(List<StoryBean> list) {
+                mCollectObjId = list.get(0).getObjectId();
+                //证明已收藏
+                collect_img.setBackgroundResource(R.drawable.selector_collected);
+                isCollected = true;
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                isCollected = false;
+            }
+        });
     }
 
     class UrlTask extends AsyncTask<String, Void, String> {
@@ -222,6 +228,8 @@ public class StoryDetailActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 if (isCollected) {
+                    //先查询此条收藏的id
+                    getMobBeanId();
                     //取消收藏
                     mStoryBean.setObjectId(mCollectObjId);
                     mStoryBean.delete(mContext, new DeleteListener() {
@@ -229,11 +237,13 @@ public class StoryDetailActivity extends BaseActivity {
                         public void onSuccess() {
                             isCollected = false;
                             ToastAlone.show(R.string.collect_cancel);
+                            collect_img.setBackgroundResource(R.drawable.selector_collection);
                         }
 
                         @Override
                         public void onFailure(int i, String s) {
                             isCollected = true;
+                            LogUtil.v(s);
                             ToastAlone.show(R.string.collect_cancel_fail);
                         }
                     });
@@ -241,7 +251,8 @@ public class StoryDetailActivity extends BaseActivity {
                     //收藏
                     if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
                         //去登录页面进行登录
-
+                        Intent intent = new Intent(mContext, LoginActivity.class);
+                        startActivity(intent);
                     } else {
                         //直接就收藏了
                         mStoryBean.setIsCollect(1);
@@ -250,12 +261,16 @@ public class StoryDetailActivity extends BaseActivity {
                             @Override
                             public void onSuccess() {
                                 //收藏成功
+                                isCollected = true;
                                 ToastAlone.show(R.string.collect_success);
+                                collect_img.setBackgroundResource(R.drawable.selector_collected);
                             }
 
                             @Override
                             public void onFailure(int i, String s) {
+                                LogUtil.v(s);
                                 //收藏成功
+                                isCollected = false;
                                 ToastAlone.show(R.string.collect_fail);
                             }
                         });

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,10 +31,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xutils.common.util.LogUtil;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -126,7 +121,8 @@ public class HotStoryFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
+            LogUtil.w("Latest---onActivityResult");
             //如果是已读的话，更新整个数据源
             if (mClickItemPosition != -1) {
                 View view = mStoryList.getChildAt(mClickItemPosition - mStoryList.getFirstVisiblePosition());
@@ -191,12 +187,12 @@ public class HotStoryFragment extends BaseFragment {
                 } else {
                     Element href_element = element.select("[href]").first();
 
-                    LogUtil.w(href_element.attr("href"));
+//                    LogUtil.w(href_element.attr("href"));
 
                     Element img_element = href_element.select("img[src]").first();
-                    LogUtil.i(img_element.attr("src") + "/n"
-                                    + img_element.attr("alt")
-                    );
+//                    LogUtil.i(img_element.attr("src") + "/n"
+//                                    + img_element.attr("alt")
+//                    );
                     bean.setmContentUrl(href_element.attr("href"));
                     bean.setTitle(img_element.attr("alt"));
                     String picUrl = img_element.attr("src");

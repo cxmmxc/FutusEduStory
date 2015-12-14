@@ -32,7 +32,7 @@ public class StoryApp extends Application {
 
     private void initData() {
         //初始化Bob
-        Bmob.initialize(this, "c7837cb415200d2068b60ef6e2c2d62e");
+        Bmob.initialize(this, Constans.BmobAppId);
         ToastAlone.init(this);
         LogUtil.customTagPrefix = "cxm";
         FUTUS_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Futus";

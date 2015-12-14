@@ -31,6 +31,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.xutils.common.util.LogUtil;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -128,7 +129,8 @@ public class LatestStoryFragment extends BaseFragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == STORY_REQUEST_CODE) {
+            LogUtil.w("Latest---onActivityResult");
             //如果是已读的话，更新整个数据源
             if (mClickItemPosition != -1) {
                 View view = mStoryList.getChildAt(mClickItemPosition - mStoryList.getFirstVisiblePosition());

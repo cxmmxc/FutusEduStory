@@ -19,6 +19,7 @@ import org.xutils.common.util.LogUtil;
 import org.xutils.ex.DbException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lmz_cxm on 2015/11/28.
@@ -31,7 +32,7 @@ public class StoryContentAdapter extends BaseAdapter {
         mInflater = LayoutInflater.from(activity);
     }
 
-    public void setData(ArrayList<StoryBean> beans) {
+    public void setData(List<StoryBean> beans) {
         if (beans != null) {
             mStoBeans.clear();
             mStoBeans.addAll(beans);
@@ -39,7 +40,7 @@ public class StoryContentAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void addData(ArrayList<StoryBean> beans) {
+    public void addData(List<StoryBean> beans) {
         if (beans != null) {
             mStoBeans.addAll(beans);
         }
@@ -77,7 +78,7 @@ public class StoryContentAdapter extends BaseAdapter {
         try {
             StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%"+storyBean.getTitle()+"%").findFirst();
             if (bean != null) {
-                LogUtil.w(bean.toString());
+//                LogUtil.w(bean.toString());
                 storyBean = bean;
             }
 

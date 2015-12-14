@@ -28,6 +28,8 @@ public class StoryBean extends BmobObject {
     @Column(name = "isRead")//默认0是未读，1是已读
     private int isRead;
 
+    private String personObjId;//对应的用户的personId，用于收藏用
+
     public String getPersonObjId() {
         return personObjId;
     }
@@ -35,8 +37,6 @@ public class StoryBean extends BmobObject {
     public void setPersonObjId(String personObjId) {
         this.personObjId = personObjId;
     }
-
-    private String personObjId;//对应的用户的personId，用于收藏用
 
     public int getId() {
         return id;

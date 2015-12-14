@@ -29,4 +29,6 @@
     <string name="mine_email">我的邮箱</string>
     <string name="logout">退出登录</string>
     <string name="recent_look">最近浏览</string>
+    <string name="fail_count_data">查询数据失败</string>
+    <string name="load_all">数据已全部加载</string>
 </resources>
