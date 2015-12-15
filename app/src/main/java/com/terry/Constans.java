@@ -6,8 +6,8 @@ package com.terry;
  * 描述：常量类
  */
 public class Constans {
-    public static String BmobAppId = "c7837cb415200d2068b60ef6e2c2d62e";
-    private  static String BmobSecret = "018d7407033068e8/";
+    public static String BmobAppId = "0f851a425bc1ef730a1f3e42379ed4e4";
+    private  static String BmobSecret = "d196d7dfd060da10";
 
     public static String BaseUrl = "http://cloud.bmob.cn/"+BmobSecret;
 }

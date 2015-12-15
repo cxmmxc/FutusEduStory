@@ -245,6 +245,7 @@ public class IndexActivity extends BaseActivity implements View.OnClickListener{
                 break;
             case R.id.uploadfile_text:
                 //进入上传文件页面，仅作者可见
+                startActivity(new Intent(mContext, MusicUploadActivity.class));
                 break;
 
         }

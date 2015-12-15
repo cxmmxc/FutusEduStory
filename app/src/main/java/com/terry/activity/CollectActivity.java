@@ -15,20 +15,23 @@ import com.terry.BaseActivity;
 import com.terry.Constans;
 import com.terry.R;
 import com.terry.adapter.StoryContentAdapter;
+import com.terry.bean.MpThree;
 import com.terry.bean.StoryBean;
 import com.terry.util.ToastAlone;
 
 import org.xutils.common.Callback;
 import org.xutils.common.util.LogUtil;
-import org.xutils.http.HttpTask;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.util.List;
 
+import cn.bmob.v3.Bmob;
 import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.CountListener;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UploadBatchListener;
 
 /**
  * 作者：Terry.Chen on 2015/12/141032.
@@ -58,31 +61,32 @@ public class CollectActivity extends BaseActivity {
         mScAdapter = new StoryContentAdapter(mContext);
         mCollectListview.setAdapter(mScAdapter);
 
-//        BmobQuery<StoryBean> query = new BmobQuery<StoryBean>();
-//        query.count(mContext, StoryBean.class, new CountListener() {
-//            @Override
-//            public void onSuccess(int i) {
-//                mTotoalCount = i;
-//                LogUtil.i(i+"");
-//                getMobData(0);
-//            }
-//
-//            @Override
-//            public void onFailure(int i, String s) {
-//                ToastAlone.show(R.string.fail_count_data);
-//                progressbar.setVisibility(View.GONE);
-//            }
-//        });
-        getCloudData();
+        BmobQuery<StoryBean> query = new BmobQuery<StoryBean>();
+        query.count(mContext, StoryBean.class, new CountListener() {
+            @Override
+            public void onSuccess(int i) {
+                mTotoalCount = i;
+                LogUtil.i(i + "");
+                getMobData(0);
+            }
+
+            @Override
+            public void onFailure(int i, String s) {
+                ToastAlone.show(R.string.fail_count_data);
+                progressbar.setVisibility(View.GONE);
+            }
+        });
+
+//        getCloudData();
     }
 
     private void getCloudData() {
-        RequestParams params = new RequestParams(Constans.BaseUrl+"getCollectData");
-        params.addBodyParameter("personObjId", spUtil.getPersonObjid());
+        RequestParams params = new RequestParams(Constans.BaseUrl+"getMp3Files");
+//        params.addBodyParameter("personObjId", spUtil.getPersonObjid());
         x.http().post(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String s) {
-                LogUtil.v(s);
+//                LogUtil.v(s);
             }
 
             @Override
@@ -107,13 +111,13 @@ public class CollectActivity extends BaseActivity {
         BmobQuery<StoryBean> query = new BmobQuery<StoryBean>();
         query.addWhereEqualTo("personObjId", spUtil.getPersonObjid());
         query.setLimit(50);//一次查询限制10条
-//        query.setSkip(skip);
+        query.setSkip(skip);
         query.findObjects(mContext, new FindListener<StoryBean>() {
             @Override
             public void onSuccess(List<StoryBean> list) {
                 progressbar.setVisibility(View.GONE);
                 collect_pull_list.onRefreshComplete();
-                LogUtil.v(list.toString());
+//                LogUtil.v(list.toString());
                 if (skip == 0) {
                     mScAdapter.setData(list);
                 } else {
