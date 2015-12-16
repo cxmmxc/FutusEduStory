@@ -106,6 +106,7 @@ public class CollectActivity extends BaseActivity {
         });
     }
 
+
     private void getMobData(final int skip) {
         //从服务器获取数据
         BmobQuery<StoryBean> query = new BmobQuery<StoryBean>();

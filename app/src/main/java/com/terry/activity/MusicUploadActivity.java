@@ -2,8 +2,10 @@ package com.terry.activity;
 
 import android.os.Environment;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.bmob.BmobProFile;
 import com.terry.BaseActivity;
 import com.terry.R;
 import com.terry.bean.MpThree;
@@ -29,23 +31,67 @@ import cn.bmob.v3.listener.UploadBatchListener;
 public class MusicUploadActivity extends BaseActivity {
     private TextView read_text;
     private String[] filepaths;
-    private String dir_path = Environment.getExternalStorageDirectory() + "/Futus_music";
+    private String dir_path = Environment.getExternalStorageDirectory() + "/Futus_music/";
     private List<BmobObject> mpThrees;
+    private EditText edit_num;
+    private int one_total;
     @Override
     protected void initView() {
         setContentView(R.layout.upload_music_layout);
         read_text = (TextView) findViewById(R.id.read_text);
+        edit_num = (EditText) findViewById(R.id.edit_num);
     }
 
     public void uploadClick(View view) {
-        //开始上传
+        int currentIndex;
+        /*BmobProFile.getInstance(mContext).uploadBatch(filepaths, new com.bmob.btp.callback.UploadBatchListener() {
+            @Override
+            public void onSuccess(boolean isFinish,String[] fileNames,String[] urls,BmobFile[] files) {
+                LogUtil.v("上传成功");
+                //上传成功，开始建表
+                LogUtil.v("isFinish="+isFinish+"files.length="+files.length+",one_total="+one_total);
+                if (isFinish) {
+                    LogUtil.e(one_total+"到了");
+                    int file_lenght = files.length;
+                    for (int i = 0; i < file_lenght; i++) {
+                        BmobFile bmobFile = files[i];
+                        LogUtil.i(bmobFile.toString());
+                        MpThree mpThree = new MpThree();
+                        mpThree.setMp3_file_url(bmobFile.getFileUrl(mContext));
+                        mpThree.setMp3_name(bmobFile.getFilename());
+                        mpThree.setMp3_url(bmobFile.getUrl());
+                        mpThrees.add(mpThree);
+                    }
+                    one_total = 0;
+                    filepaths = null;
+                }
+            }
+
+            @Override
+            public void onProgress(int curIndex, int curPercent, int total, int totalPercent) {
+                read_text.setText("当前为第" + curIndex + "个文件，上传进度=" + curPercent + "。\n总上传数为" + total + ",百分比为：" + totalPercent);
+                LogUtil.i("当前为第" + curIndex + "个文件，上传进度=" + curPercent + "。\n总上传数为" + total + ",百分比为：" + totalPercent);
+            }
+
+            @Override
+            public void onError(int statuscode, String errormsg) {
+                one_total = 0;
+                filepaths = null;
+                LogUtil.v("上传失败"+errormsg+",statuscode="+statuscode);
+            }
+        });*/
+
+
+
+        //旧版开始上传
         Bmob.uploadBatch(mContext, filepaths, new UploadBatchListener() {
             @Override
             public void onSuccess(List<BmobFile> list, List<String> list1) {
                 LogUtil.v("上传成功");
                 //上传成功，开始建表
-                LogUtil.v("shangchuan_size="+list.size()+",string_size="+list1.size());
-                if (list.size() == 273) {
+                LogUtil.v("shangchuan_size="+list.size()+",one_total="+one_total);
+                if (list.size() == one_total) {
+                    LogUtil.e(one_total+"到了");
                     for (BmobFile bmobFile : list) {
                         LogUtil.i(bmobFile.toString());
                         MpThree mpThree = new MpThree();
@@ -62,7 +108,7 @@ public class MusicUploadActivity extends BaseActivity {
             @Override
             public void onProgress(int curIndex, int curPercent, int total, int totalPercent) {
                 read_text.setText("当前为第" + curIndex + "个文件，上传进度=" + curPercent + "。\n总上传数为" + total + ",百分比为：" + totalPercent);
-                LogUtil.i("当前为第" + curIndex + "个文件，上传进度=" + curPercent + "。\n总上传数为" + total + ",百分比为：" + totalPercent);
+//                LogUtil.i("当前为第" + curIndex + "个文件，上传进度=" + curPercent + "。\n总上传数为" + total + ",百分比为：" + totalPercent);
             }
 
             @Override
@@ -78,20 +124,23 @@ public class MusicUploadActivity extends BaseActivity {
 
     public void readFile(View view) {
         //读取文件
-        File file = new File(dir_path);
+        String num_dir = edit_num.getText().toString();
+        File file = new File(dir_path+num_dir);
         File[] listFiles = file.listFiles();
         int length = listFiles.length;
+        one_total = length;
         filepaths = new String[length];
         for (int i = 0; i < length; i++) {
             filepaths[i] = listFiles[i].getAbsolutePath();
-            read_text.setText("正在读取第" + i + "个文件");
-            if (i == 272) {
+            read_text.setText("正在读取第" + (i+1) + "个文件");
+            if ((i+1) == one_total) {
                 ToastAlone.show("已全部读取完毕");
             }
         }
     }
 
     public void createTable(View view) {
+        LogUtil.w(""+mpThrees.size());
         new BmobObject().insertBatch(mContext, mpThrees, new SaveListener() {
             @Override
             public void onSuccess() {
@@ -105,6 +154,12 @@ public class MusicUploadActivity extends BaseActivity {
                 ToastAlone.show("建表失败" + s+",err="+i);
             }
         });
+    }
+
+    public void clearData(View view) {
+        mpThrees.clear();
+        one_total = 0;
+        filepaths = null;
     }
 
     @Override
