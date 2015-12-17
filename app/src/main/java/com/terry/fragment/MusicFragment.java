@@ -2,9 +2,25 @@ package com.terry.fragment;
 
 import android.support.v4.app.Fragment;
 
-/**
- * Created by jl02 on 2015/11/27.
- */
-public class MusicFragment extends Fragment {
+import com.terry.BaseFragment;
 
+/**
+ * 从服务器获取MusicBean的数据信息
+ */
+public class MusicFragment extends BaseFragment{
+
+    @Override
+    protected void initView() {
+
+    }
+
+    @Override
+    protected void initData() {
+
+    }
+
+    @Override
+    protected void setListener() {
+
+    }
 }
