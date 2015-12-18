@@ -24,4 +24,5 @@
     <color name="wgh_safeschool_solid_pressed">#4CD964</color>
 
     <color name="half_tras_gray">#33bebebe</color>
+    <color name="half_tras_black">#77000000</color>
 </resources>

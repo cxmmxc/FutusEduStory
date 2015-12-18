@@ -10,4 +10,6 @@ public class Constans {
     private  static String BmobSecret = "d196d7dfd060da10";
 
     public static String BaseUrl = "http://cloud.bmob.cn/"+BmobSecret;
+
+    public static int Limit_Count = 10;
 }

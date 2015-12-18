@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dip">
+        <TextView
+            android:id="@+id/music_read_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:text="@string/futus_music"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:gravity="center" />
+        <TextView
+            android:id="@+id/music_textview"
+            style="@style/regist_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/music_read_textview"
+            android:layout_marginRight="10dip"
+            android:gravity="center_vertical|left"
+            android:maxLines="2"
+            android:padding="5dip"
+            />
+    </RelativeLayout>
+</LinearLayout>
