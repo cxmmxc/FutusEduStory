@@ -6,10 +6,12 @@
     <LinearLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="55dip"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:background="@android:color/white"
+        android:background="@color/half_tras_black"
+        android:paddingTop="10dip"
+        android:paddingBottom="10dip"
         >
         <RelativeLayout
             android:id="@+id/tab_home_layout"
@@ -88,19 +90,11 @@
         </RelativeLayout>
 
     </LinearLayout>
-    <View
-        android:id="@+id/spit_view"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="@color/dot_uncheck_color"
-        android:layout_above="@id/tab_layout"
-        android:layout_marginBottom="5dip"
-        />
     <FrameLayout
         android:id="@+id/content_tab_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/spit_view"
+        android:layout_above="@id/tab_layout"
         />
 
 </RelativeLayout>
