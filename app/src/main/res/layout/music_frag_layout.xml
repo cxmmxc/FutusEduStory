@@ -3,66 +3,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/music_info_layout"
+        android:layout_width="match_parent"
+        android:layout_height="55dip"
+        android:layout_alignParentBottom="true"
+        android:background="@mipmap/half_black_bg"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:paddingTop="5dip"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/play_pause_img"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:scaleType="centerInside"
+            android:src="@mipmap/play_icon" />
+
+        <TextView
+            android:id="@+id/music_title_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/total_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/current_time_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dip"
+            android:layout_toLeftOf="@id/play_pause_img"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
     <com.handmark.pulltorefresh.library.PullToRefreshListView
         android:id="@+id/music_pulllistview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_above="@id/music_info_layout"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
         android:fastScrollEnabled="false"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
-        android:smoothScrollbar="true"
-        android:layout_marginBottom="55dip"
-        />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dip"
-        android:layout_alignParentBottom="true"
-        android:background="@color/half_tras_black"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="5dip"
-        android:paddingBottom="5dip"
-        >
-        <ImageView
-            android:id="@+id/play_pause_img"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:src="@mipmap/play_icon"
-            android:scaleType="centerInside"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            />
-        <TextView
-            android:id="@+id/music_title_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:text="channel"
-            android:textSize="18sp"
-            android:gravity="center_vertical"
-            android:ellipsize="marquee"
-            />
-        <TextView
-            android:id="@+id/total_time_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:text="26:15"
-            android:textSize="18sp"
-            android:layout_alignParentBottom="true"
-            />
-        <TextView
-            android:id="@+id/current_time_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:text="00:15"
-            android:textSize="18sp"
-            android:layout_toLeftOf="@id/play_pause_img"
-            android:layout_marginRight="10dip"
-            android:layout_centerVertical="true"
-            />
-    </RelativeLayout>
+        android:smoothScrollbar="true" />
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
 </RelativeLayout>

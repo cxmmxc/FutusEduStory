@@ -1,6 +1,12 @@
 package com.terry;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.Application;
+import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Environment;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -21,6 +27,7 @@ public class StoryApp extends Application {
     public static String FUTUS_DIR;
     private final static int DB_VERSION = 1;//默认数据库版本号是1
     public static DbManager mDbManager;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -54,5 +61,31 @@ public class StoryApp extends Application {
                     }
                 });
         mDbManager = x.getDb(daoConfig);
+    }
+
+    /**
+     * exitAcivity
+     */
+    public static void exit(final Activity activity) {
+        // 判断SDK版本
+        int sdkVersion = Integer.valueOf(android.os.Build.VERSION.SDK);
+        // 如果是2.2返回sdkVersion =8
+        //清除文件夹内的缓存文件
+
+        // 加判断
+        ActivityManager manager = (ActivityManager) activity
+                .getSystemService(ACTIVITY_SERVICE);
+
+        if (sdkVersion < 8) {
+            manager.restartPackage(activity.getPackageName());
+            System.exit(0);
+        } else {
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(startMain);
+            System.exit(0);
+        }
+
     }
 }

@@ -158,20 +158,23 @@ public class LatestStoryFragment extends BaseFragment {
         protected void onPostExecute(Document document) {
             super.onPostExecute(document);
             story_pull_list.onRefreshComplete();
-                        File file = new File(Environment.getExternalStorageDirectory() + "/Latest12071513.txt");
-
-            try {
-                if(!file.exists()) {
-                    file.createNewFile();
-                }
-                FileWriter writer = new FileWriter(file.getAbsolutePath());
-                BufferedWriter bufferedWriter = new BufferedWriter(writer);
-                bufferedWriter.write(document.toString());
-                bufferedWriter.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+//            File file = new File(Environment.getExternalStorageDirectory() + "/Latest12071513.txt");
+//            try {
+//                if (!file.exists()) {
+//                    file.createNewFile();
+//                }
+//                FileWriter writer = new FileWriter(file.getAbsolutePath());
+//                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+//                bufferedWriter.write(document.toString());
+//                bufferedWriter.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            if (document == null) {
+                ToastAlone.show(R.string.load_fail_hint);
+                return;
             }
             Element page = document.select("div.page").first();
             Elements children = page.children();

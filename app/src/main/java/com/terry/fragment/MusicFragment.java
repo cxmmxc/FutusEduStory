@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -24,6 +26,7 @@ import com.terry.inter.IOncomplete;
 import com.terry.inter.IOnprapared;
 import com.terry.util.MusicPlayer;
 import com.terry.util.ToastAlone;
+import com.terry.view.GifLoadingDialog;
 
 import org.xutils.common.util.LogUtil;
 
@@ -47,12 +50,16 @@ public class MusicFragment extends BaseFragment{
     private MusicAdapter mMusicAdapter;
     private ImageView play_pause_img;
     private TextView music_title_text, total_time_text, current_time_text;
+    private RelativeLayout music_info_layout;
     private boolean isPlaying;
     private MpThree mMpthree;
     private MusicPlayer mMusicPlayer;
     private int mCurrentItem;
 
     private int mTotalCount;
+
+    private GifLoadingDialog dialog;
+    private ProgressBar progressbar;
 
     @Nullable
     @Override
@@ -71,11 +78,14 @@ public class MusicFragment extends BaseFragment{
         music_title_text = (TextView) mRootView.findViewById(R.id.music_title_text);
         total_time_text = (TextView) mRootView.findViewById(R.id.total_time_text);
         current_time_text = (TextView) mRootView.findViewById(R.id.current_time_text);
-
+        music_info_layout = (RelativeLayout) mRootView.findViewById(R.id.music_info_layout);
+        progressbar = (ProgressBar) mRootView.findViewById(R.id.progressbar);
     }
 
     @Override
     protected void initData() {
+        dialog = new GifLoadingDialog(mActivity, -1);
+        dialog.setLoadText("缓冲中...");
         music_pulllistview.setMode(PullToRefreshBase.Mode.BOTH);
         mFreshType = FreshType.Fresh;
         mMusicAdapter = new MusicAdapter();
@@ -92,11 +102,13 @@ public class MusicFragment extends BaseFragment{
                 LogUtil.i("count=" + i);
                 mTotalCount = i;
                 getMusicData(FreshType.Fresh);
+                progressbar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(int i, String s) {
-
+                ToastAlone.show("errorcode=" + i + ",errorstr=" + s);
+                progressbar.setVisibility(View.GONE);
             }
         });
     }
@@ -110,6 +122,7 @@ public class MusicFragment extends BaseFragment{
                     ToastAlone.show(R.string.load_all);
                     break;
                 case 2:
+                    //获取并显示当前播放歌曲的播放时间
                     int currentTime = mMusicPlayer.getCurrentTime();
                     int m_time = currentTime / 60;
                     int s_time = currentTime % 60;
@@ -138,6 +151,10 @@ public class MusicFragment extends BaseFragment{
             @Override
             public void onPrepared(MediaPlayer mp) {
                 //准备完成再开始播放
+                LogUtil.w("setOnpreparedListener");
+                music_info_layout.setVisibility(View.VISIBLE);
+                setTotalTime();
+                dialog.dismiss();
             }
         });
 
@@ -162,12 +179,13 @@ public class MusicFragment extends BaseFragment{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //进入播放页面
                 mMpthree = mMusicAdapter.getItem(position - 1);
+//                ToastAlone.show(mMpthree.getMp3_name());
                 mCurrentItem = position - 1;
                 music_title_text.setText(mMpthree.getMp3_name());
                 //开始播放此歌曲
                 try {
+                    dialog.show();
                     mMusicPlayer.playUrlMusic(mMpthree.getMp3_file_url());
-                    setTotalTime();
                     play_pause_img.setImageResource(R.mipmap.pause_icon);
                     isPlaying = true;
                     mHander.sendEmptyMessage(2);
@@ -200,7 +218,7 @@ public class MusicFragment extends BaseFragment{
         mMusicPlayer.setOncomPleteListener(new IOncomplete() {
             @Override
             public void oncomplete(MediaPlayer mediaPlayer) {
-                LogUtil.v("setOncomPleteListener");
+                LogUtil.v("oncomplete");
                 //播放下一首
                 int count = mMusicAdapter.getCount();
                 if (mCurrentItem + 1 > count) {
@@ -211,7 +229,7 @@ public class MusicFragment extends BaseFragment{
                 try {
                     music_title_text.setText(mpThree.getMp3_name());
                     mMusicPlayer.playUrlMusic(mpThree.getMp3_file_url());
-                    setTotalTime();
+//                    setTotalTime();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

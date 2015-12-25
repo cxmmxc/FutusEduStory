@@ -56,6 +56,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener,
         mBackgroundMediaPlayer.setLooping(false);
         mIsPaused = false;
         mCurrentPath = null;
+        mBackgroundMediaPlayer.setOnPreparedListener(this);
         mBackgroundMediaPlayer.setOnCompletionListener(this);
     }
 
@@ -66,8 +67,7 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener,
     public void playUrlMusic(String url) throws IOException {
         mBackgroundMediaPlayer.reset();
         mBackgroundMediaPlayer.setDataSource(mContext, Uri.parse(url));
-        mBackgroundMediaPlayer.prepare();
-        mBackgroundMediaPlayer.start();
+        mBackgroundMediaPlayer.prepareAsync();
     }
 
     public void seekToMusic(int time_duration) {
@@ -214,8 +214,8 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener,
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        LogUtil.v("onComplete");
         //接着播放下一首
+        LogUtil.v("onCompletion");
         if (mOncomplete != null) {
             mOncomplete.oncomplete(mp);
         }
@@ -231,7 +231,10 @@ public class MusicPlayer implements MediaPlayer.OnCompletionListener,
     @Override
     public void onPrepared(MediaPlayer mp) {
         LogUtil.v("onPrepared");
-        mOnPrepared.onPrepared(mp);
+        mp.start();
+        if (mOnPrepared != null) {
+            mOnPrepared.onPrepared(mp);
+        }
     }
 }
 

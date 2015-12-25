@@ -44,7 +44,9 @@ public class GifLoadingDialog extends Dialog implements DialogInterface.OnDismis
 
     public void setLoadText(String txt) {
         load_text.setText(txt);
-
+    }
+    public void setLoadText(int restxt) {
+        load_text.setText(mContext.getResources().getString(restxt));
     }
 
     @Override

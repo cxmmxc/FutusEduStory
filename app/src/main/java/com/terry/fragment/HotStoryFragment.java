@@ -166,7 +166,10 @@ public class HotStoryFragment extends BaseFragment {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-
+            if (document == null) {
+                ToastAlone.show(R.string.load_fail_hint);
+                return;
+            }
 
             Element page = document.select("div.page").first();
             Element next = page.select("a.next").first();

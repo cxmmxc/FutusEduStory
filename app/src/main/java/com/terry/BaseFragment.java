@@ -11,7 +11,7 @@ import com.terry.util.SpUtil;
  */
 public abstract class BaseFragment extends Fragment {
     protected FragmentActivity mActivity;
-    private SpUtil spUtil;
+    protected SpUtil spUtil;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
