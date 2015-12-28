@@ -183,13 +183,10 @@ public class IndexTabActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(mClickCount == 0) {
-            ToastAlone.show(R.string.double_click_out);
-            mClickCount ++;
-            mHandler.sendEmptyMessageDelayed(1, 2000);
-            return;
-        } else {
-            ToastAlone.show(R.string.welcome_again);
+        mClickCount += 1;
+        ToastAlone.show(R.string.double_click_out_welcome_again);
+        mHandler.sendEmptyMessageDelayed(1, 1500);
+        if (mClickCount >= 2) {
             StoryApp.exit(IndexTabActivity.this);
         }
     }

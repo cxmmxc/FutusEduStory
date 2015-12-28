@@ -31,7 +31,6 @@
     <string name="recent_look">最近浏览</string>
     <string name="fail_count_data">查询数据失败</string>
     <string name="load_all">数据已全部加载</string>
-    <string name="double_click_out">双击退出</string>
-    <string name="welcome_again">欢迎下次再来</string>
+    <string name="double_click_out_welcome_again">双击退出,欢迎下次再来</string>
     <string name="load_fail_hint">加载失败，请下拉刷新重新加载</string>
 </resources>

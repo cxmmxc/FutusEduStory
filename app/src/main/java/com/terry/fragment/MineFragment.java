@@ -17,6 +17,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.terry.BaseFragment;
 import com.terry.R;
 import com.terry.activity.CollectActivity;
+import com.terry.activity.HeadActivity;
 import com.terry.activity.RecentReadActivity;
 
 /**
@@ -72,7 +73,8 @@ public class MineFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 //进入头像选择页面
-
+                Intent intent = new Intent(mActivity, HeadActivity.class);
+                startActivity(intent);
             }
         });
 
