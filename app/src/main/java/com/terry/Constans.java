@@ -11,5 +11,5 @@ public class Constans {
 
     public static String BaseUrl = "http://cloud.bmob.cn/"+BmobSecret;
 
-    public static int Limit_Count = 10;
+    public static int Limit_Count = 30;
 }
