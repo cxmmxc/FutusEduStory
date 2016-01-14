@@ -23,7 +23,8 @@
     <string name="regist_success">注册成功</string>
     <string name="regist_fail">注册失败</string>
     <string name="user_infp">用户详情</string>
-    <string name="mine_collections">我的收藏</string>
+    <string name="mine_futus_collections">我的故事</string>
+    <string name="mine_musci_collections">我的音乐</string>
     <string name="mine_head_icon">我的头像</string>
     <string name="mine_username">我的用户名</string>
     <string name="mine_email">我的邮箱</string>

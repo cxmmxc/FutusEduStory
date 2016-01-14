@@ -24,7 +24,7 @@ import com.terry.R;
  * 描述：用户详情
  */
 public class UseActivity extends BaseActivity {
-    private ImageView back_img;
+    private ImageView back_img, img_user;
     private RelativeLayout header_layout;
     private SimpleDraweeView user_img;
     private TextView usename_text, email_text, collect_text, recent_look_text
@@ -41,6 +41,7 @@ public class UseActivity extends BaseActivity {
         collect_text = (TextView) findViewById(R.id.collect_text);
         recent_look_text = (TextView) findViewById(R.id.recent_look_text);
         logout_text = (TextView) findViewById(R.id.logout_text);
+        img_user = (ImageView) findViewById(R.id.img_user);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UseActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 //进入头像选择页面
-
+                startActivityForResult(new Intent(mContext, HeadActivity.class), 110);
             }
         });
 
@@ -124,5 +125,16 @@ public class UseActivity extends BaseActivity {
     @Override
     protected void initToolbar() {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == 110) {
+                if (HeadActivity.mHeadBitmap != null) {
+                    img_user.setImageBitmap(HeadActivity.mHeadBitmap);
+                }
+            }
+        }
     }
 }

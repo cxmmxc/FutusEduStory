@@ -1,12 +1,10 @@
-package com.terry.fragment;
+package com.terry.activity;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,13 +19,11 @@ import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.terry.BaseFragment;
+import com.terry.BaseActivity;
 import com.terry.Constans;
 import com.terry.R;
 import com.terry.StoryApp;
-import com.terry.activity.LoginActivity;
 import com.terry.bean.MpThree;
-import com.terry.bean.StoryBean;
 import com.terry.inter.IOncomplete;
 import com.terry.inter.IOnprapared;
 import com.terry.util.MusicPlayer;
@@ -47,16 +43,16 @@ import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 /**
- * 从服务器获取MusicBean的数据信息
+ * 作者：Terry.Chen on 2016/1/141553.
+ * 邮箱：herewinner@163.com
+ * 描述：音乐收藏
  */
-public class MusicFragment extends BaseFragment {
-
-    private View mRootView;
+public class MusciCollectActivity extends BaseActivity {
     private PullToRefreshListView music_pulllistview;
     private ListView music_listview;
     private FreshType mFreshType;
     private MusicAdapter mMusicAdapter;
-    private ImageView play_pause_img, collect_mp_img;
+    private ImageView play_pause_img, collect_mp_img, back_img;
     private TextView music_title_text, total_time_text, current_time_text;
     private RelativeLayout music_info_layout;
     private boolean isPlaying;
@@ -70,44 +66,43 @@ public class MusicFragment extends BaseFragment {
     private ProgressBar progressbar;
     private String mCollectObjId;
     private boolean isCollected;
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (mRootView == null) {
-            mRootView = inflater.inflate(R.layout.music_frag_layout, null);
-        }
-        return mRootView;
-    }
+    private RelativeLayout music_co_title;
 
     @Override
     protected void initView() {
-        music_pulllistview = (PullToRefreshListView) mRootView.findViewById(R.id.music_pulllistview);
+        setContentView(R.layout.music_frag_layout);
+
+        music_pulllistview = (PullToRefreshListView) findViewById(R.id.music_pulllistview);
         music_listview = music_pulllistview.getRefreshableView();
-        play_pause_img = (ImageView) mRootView.findViewById(R.id.play_pause_img);
-        collect_mp_img = (ImageView) mRootView.findViewById(R.id.collect_mp_img);
-        music_title_text = (TextView) mRootView.findViewById(R.id.music_title_text);
-        total_time_text = (TextView) mRootView.findViewById(R.id.total_time_text);
-        current_time_text = (TextView) mRootView.findViewById(R.id.current_time_text);
-        music_info_layout = (RelativeLayout) mRootView.findViewById(R.id.music_info_layout);
-        progressbar = (ProgressBar) mRootView.findViewById(R.id.progressbar);
+        play_pause_img = (ImageView) findViewById(R.id.play_pause_img);
+        collect_mp_img = (ImageView) findViewById(R.id.collect_mp_img);
+        back_img = (ImageView) findViewById(R.id.back_img);
+        music_title_text = (TextView) findViewById(R.id.music_title_text);
+        total_time_text = (TextView) findViewById(R.id.total_time_text);
+        current_time_text = (TextView) findViewById(R.id.current_time_text);
+        music_info_layout = (RelativeLayout) findViewById(R.id.music_info_layout);
+        progressbar = (ProgressBar) findViewById(R.id.progressbar);
+        music_co_title = (RelativeLayout) findViewById(R.id.music_co_title);
     }
 
     @Override
     protected void initData() {
-        dialog = new GifLoadingDialog(mActivity, -1);
+        music_co_title.setVisibility(View.VISIBLE);
+
+        dialog = new GifLoadingDialog(mContext, -1);
         dialog.setLoadText("缓冲中...");
         music_pulllistview.setMode(PullToRefreshBase.Mode.BOTH);
         mFreshType = FreshType.Fresh;
         mMusicAdapter = new MusicAdapter();
         music_listview.setAdapter(mMusicAdapter);
-        mMusicPlayer = MusicPlayer.getInstance(mActivity);
+        mMusicPlayer = MusicPlayer.getInstance(mContext);
         getTotalCount();
     }
 
     private void getTotalCount() {
         BmobQuery<MpThree> query = new BmobQuery<MpThree>();
-        query.count(mActivity, MpThree.class, new CountListener() {
+        query.addWhereEqualTo("isCollect", "1");
+        query.count(mContext, MpThree.class, new CountListener() {
             @Override
             public void onSuccess(int i) {
                 LogUtil.i("count=" + i);
@@ -156,8 +151,15 @@ public class MusicFragment extends BaseFragment {
         }
     };
 
+
     @Override
     protected void setListener() {
+        back_img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         mMusicPlayer.setOnpreparedListener(new IOnprapared() {
             @Override
             public void onPrepared(MediaPlayer mp) {
@@ -271,13 +273,13 @@ public class MusicFragment extends BaseFragment {
                     //false,则判断是否登录
                     if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
                         //去登录页面进行登录
-                        Intent intent = new Intent(mActivity, LoginActivity.class);
+                        Intent intent = new Intent(mContext, LoginActivity.class);
                         startActivity(intent);
-                    }else {
+                    } else {
                         //已登录，则直接进行收藏更新操作
                         mMpthree.setIsCollect(1);
                         mMpthree.setPersonObjId(spUtil.getPersonObjid());
-                        mMpthree.update(mActivity, new UpdateListener() {
+                        mMpthree.update(mContext, new UpdateListener() {
                             @Override
                             public void onSuccess() {
                                 //收藏成功
@@ -288,16 +290,16 @@ public class MusicFragment extends BaseFragment {
 
                             @Override
                             public void onFailure(int i, String s) {
-                                LogUtil.v(i+s);
+                                LogUtil.v(i + s);
                                 isCollected = false;
                                 ToastAlone.show(R.string.collect_fail);
                             }
                         });
                     }
-                }else {
+                } else {
                     //已收藏，取消收藏
                     mMpthree.setIsCollect(0);
-                    mMpthree.update(mActivity, new UpdateListener() {
+                    mMpthree.update(mContext, new UpdateListener() {
                         @Override
                         public void onSuccess() {
                             //收藏成功
@@ -339,6 +341,7 @@ public class MusicFragment extends BaseFragment {
 
     private void getMusicData(final FreshType type) {
         BmobQuery<MpThree> query = new BmobQuery<MpThree>();
+        query.addWhereEqualTo("isCollect", 1);
         query.setLimit(Constans.Limit_Count);
         switch (type) {
             case Fresh:
@@ -348,7 +351,7 @@ public class MusicFragment extends BaseFragment {
                 query.setSkip(mMusicAdapter.getCount());
                 break;
         }
-        query.findObjects(mActivity, new FindListener<MpThree>() {
+        query.findObjects(mContext, new FindListener<MpThree>() {
             @Override
             public void onSuccess(List<MpThree> list) {
                 music_pulllistview.onRefreshComplete();
@@ -382,7 +385,7 @@ public class MusicFragment extends BaseFragment {
 
         public MusicAdapter() {
             mpThreeList = new ArrayList<MpThree>();
-            mInflater = LayoutInflater.from(mActivity);
+            mInflater = LayoutInflater.from(mContext);
         }
 
         public void setData(List<MpThree> list) {
@@ -461,7 +464,7 @@ public class MusicFragment extends BaseFragment {
         BmobQuery<MpThree> mobQuery = new BmobQuery<MpThree>();
         mobQuery.addWhereEqualTo("mp3_file_url", mMpthree.getMp3_file_url());
         mobQuery.addWhereEqualTo("personObjId", spUtil.getPersonObjid());
-        mobQuery.findObjects(mActivity, new FindListener<MpThree>() {
+        mobQuery.findObjects(mContext, new FindListener<MpThree>() {
             @Override
             public void onSuccess(List<MpThree> list) {
                 mCollectObjId = list.get(0).getObjectId();
@@ -476,5 +479,10 @@ public class MusicFragment extends BaseFragment {
                 collect_mp_img.setBackgroundResource(R.mipmap.mp3_collect);
             }
         });
+    }
+
+    @Override
+    protected void initToolbar() {
+
     }
 }

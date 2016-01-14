@@ -3,11 +3,11 @@ package com.terry.view;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
@@ -15,10 +15,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ImageView;
 
-import com.terry.R;
 import com.terry.util.MeasureTool;
 
 /**
@@ -60,6 +58,8 @@ public class HeadView extends ImageView {
     private Paint paint;
     private RectF rectF;
     private Rect dst;
+    private Point mCenterPoint;
+
     public HeadView(Context context) {
         this(context, null);
     }
@@ -77,17 +77,15 @@ public class HeadView extends ImageView {
     private void initData() {
 //        testBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.splash1);
 
+        mCenterPoint = new Point();
         int[] screenWH = MeasureTool.getScreenWH((Activity) mContext);
         mScW = screenWH[0];
         mScH = screenWH[1];
+        mCenterPoint.set(mScW / 2, mScH / 2);
 
         mCircleRadius = mScW * 2 / 5;
 
         mAvatorWidth = mCircleRadius * 2;
-
-        output = Bitmap.createBitmap(mAvatorWidth,
-                mAvatorWidth, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(output);
 
         current_mode = MODE_NONE;
         mCurrentMatrix = new Matrix();
@@ -108,8 +106,33 @@ public class HeadView extends ImageView {
         mWhitePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.XOR));
         mFrontCanvas.drawCircle(mScW / 2, mScH / 2, mCircleRadius, mWhitePaint);
 
+        initCutPicParams();
+    }
+
+    private void initCutPicParams() {
+        float left,top,right,bottom,dst_left,dst_top,dst_right,dst_bottom;
+        float offsetX = mCenterPoint.x - 0-mCircleRadius;
+        float offsetY = mCenterPoint.y - 0-mCircleRadius;
+
+        top = offsetY;
+        bottom = offsetY+mAvatorWidth;
+        left = offsetX;
+        right = offsetX+mAvatorWidth;
+
+        dst_left = 0;
+        dst_top = 0;
+        dst_right = mAvatorWidth;
+        dst_bottom = mAvatorWidth;
+
+        output = Bitmap.createBitmap(mAvatorWidth,
+                mAvatorWidth, Bitmap.Config.ARGB_8888);
+        canvas = new Canvas(output);
 
         paint = new Paint();
+//        src = new Rect((int)left, (int)top, (int)right, (int)bottom);
+        dst = new Rect((int)dst_left, (int)dst_top, (int)dst_right, (int)dst_bottom);
+        rectF = new RectF(dst);
+
         paint.setAntiAlias(true);
 
         paint.setColor(0xFFFFFFFF);
@@ -128,6 +151,7 @@ public class HeadView extends ImageView {
         if (bitmap != null) {
 //            mBaseBitmap = bitmap;
             Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, mScW, mScH, true);
+            mBitmap = scaledBitmap;
             setImageBitmap(scaledBitmap);
         }
 //        invalidate();
@@ -215,10 +239,9 @@ public class HeadView extends ImageView {
      */
     public Bitmap toRoundBitmap() {
 
-//        canvas.drawRoundRect(rectF, mCircleRadius, mCircleRadius, paint);
-//        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-//        canvas.drawBitmap(mBitmap, src, dst, paint);
-//        return output;
-        return null;
+        canvas.drawRoundRect(rectF, mCircleRadius, mCircleRadius, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(mBitmap, null, dst, paint);
+        return output;
     }
 }

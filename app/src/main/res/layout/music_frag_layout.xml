@@ -1,73 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     android:orientation="vertical">
-
     <RelativeLayout
-        android:id="@+id/music_info_layout"
+        android:id="@+id/music_co_title"
         android:layout_width="match_parent"
-        android:layout_height="55dip"
-        android:layout_alignParentBottom="true"
-        android:background="@mipmap/half_black_bg"
-        android:paddingLeft="10dip"
-        android:paddingRight="10dip"
-        android:paddingTop="5dip"
-        android:visibility="gone">
+        android:layout_height="50dip"
+        android:background="@color/title_bg"
+        android:visibility="gone"
+        >
 
         <ImageView
-            android:id="@+id/play_pause_img"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_alignParentRight="true"
+            android:id="@+id/back_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:scaleType="centerInside"
-            android:src="@mipmap/play_icon" />
+            android:layout_margin="10dip"
+            android:src="@mipmap/back_img" />
 
         <TextView
-            android:id="@+id/music_title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/mine_musci_collections"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:id="@+id/music_info_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:gravity="center_vertical"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/total_time_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dip"
             android:layout_alignParentBottom="true"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:background="@mipmap/half_black_bg"
+            android:paddingLeft="10dip"
+            android:paddingRight="5dip"
+            android:paddingTop="5dip"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/current_time_text"
+            <ImageView
+                android:id="@+id/play_pause_img"
+                android:layout_width="40dip"
+                android:layout_height="40dip"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:scaleType="centerInside"
+                android:src="@mipmap/play_icon" />
+            <ImageView
+                android:id="@+id/collect_mp_img"
+                android:layout_width="35dip"
+                android:layout_height="35dip"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/play_pause_img"
+                android:layout_marginRight="5dip"
+                android:scaleType="centerInside"
+                android:src="@mipmap/mp3_collect" />
+
+            <TextView
+                android:id="@+id/music_title_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:gravity="center_vertical"
+                android:layout_toLeftOf="@id/collect_mp_img"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/total_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/current_time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dip"
+                android:layout_alignParentBottom="true"
+                android:layout_toLeftOf="@id/collect_mp_img"
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <com.handmark.pulltorefresh.library.PullToRefreshListView
+            android:id="@+id/music_pulllistview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/music_info_layout"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp"
+            android:fastScrollEnabled="false"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:smoothScrollbar="true" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dip"
-            android:layout_toLeftOf="@id/play_pause_img"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:layout_centerInParent="true" />
+
     </RelativeLayout>
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
-        android:id="@+id/music_pulllistview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/music_info_layout"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:fastScrollEnabled="false"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:smoothScrollbar="true" />
 
-    <ProgressBar
-        android:id="@+id/progressbar"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-</RelativeLayout>
+</LinearLayout>

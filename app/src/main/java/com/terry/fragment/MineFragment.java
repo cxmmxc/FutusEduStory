@@ -18,6 +18,7 @@ import com.terry.BaseFragment;
 import com.terry.R;
 import com.terry.activity.CollectActivity;
 import com.terry.activity.HeadActivity;
+import com.terry.activity.MusciCollectActivity;
 import com.terry.activity.RecentReadActivity;
 
 /**
@@ -31,7 +32,7 @@ public class MineFragment extends BaseFragment {
     private RelativeLayout header_layout;
     private SimpleDraweeView user_img;
     private TextView usename_text, email_text, collect_text, recent_look_text
-            ,logout_text;
+            ,logout_text, music_collect_text;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public class MineFragment extends BaseFragment {
         collect_text = (TextView) mRootView.findViewById(R.id.collect_text);
         recent_look_text = (TextView) mRootView.findViewById(R.id.recent_look_text);
         logout_text = (TextView) mRootView.findViewById(R.id.logout_text);
+        music_collect_text = (TextView) mRootView.findViewById(R.id.music_collect_text);
     }
 
     @Override
@@ -83,6 +85,15 @@ public class MineFragment extends BaseFragment {
             public void onClick(View v) {
                 //进入我的收藏页面
                 Intent intent = new Intent(mActivity, CollectActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        music_collect_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //音乐收藏
+                Intent intent = new Intent(mActivity, MusciCollectActivity.class);
                 startActivity(intent);
             }
         });

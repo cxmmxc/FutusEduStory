@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:keepScreenOn="true"
+    android:orientation="vertical">
 
-    <android.support.v7.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:theme="@style/ToolbarTheme"
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/title_bg"/>
+        android:background="@color/title_bg"
+        android:theme="@style/ToolbarTheme" />
 
     <WebView
         android:id="@+id/mWebView"
@@ -18,8 +18,8 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
         android:layout_margin="10dip"
-        android:scrollbars="none"
-        />
+        android:scrollbars="none" />
+
     <ImageView
         android:id="@+id/collect_img"
         android:layout_width="50dip"
@@ -29,13 +29,12 @@
         android:layout_margin="20dip"
         android:background="@drawable/selector_collection"
         android:clickable="true"
-        android:scaleType="centerInside"
-        />
+        android:scaleType="centerInside" />
+
     <ProgressBar
         android:id="@+id/progressbar"
+        style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Inverse"
-        />
+        android:layout_centerInParent="true" />
 </RelativeLayout>

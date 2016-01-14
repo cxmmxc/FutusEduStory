@@ -17,5 +17,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="确定"
+        android:onClick="EnterOnclick"
+        />
+    <ImageView
+        android:id="@+id/user_img_head"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         />
 </RelativeLayout>

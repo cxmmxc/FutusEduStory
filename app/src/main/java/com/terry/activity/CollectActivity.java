@@ -111,6 +111,7 @@ public class CollectActivity extends BaseActivity {
         //从服务器获取数据
         BmobQuery<StoryBean> query = new BmobQuery<StoryBean>();
         query.addWhereEqualTo("personObjId", spUtil.getPersonObjid());
+        query.addWhereEqualTo("isCollect", 1);
         query.setLimit(50);//一次查询限制10条
         query.setSkip(skip);
         query.findObjects(mContext, new FindListener<StoryBean>() {

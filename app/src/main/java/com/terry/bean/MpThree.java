@@ -1,5 +1,8 @@
 package com.terry.bean;
 
+import org.xutils.db.annotation.Column;
+import org.xutils.db.annotation.Table;
+
 import java.io.File;
 
 import cn.bmob.v3.BmobObject;
@@ -10,10 +13,46 @@ import cn.bmob.v3.datatype.BmobFile;
  * 邮箱：herewinner@163.com
  * 描述：MpThree
  */
+@Table(name="MpThree")
 public class MpThree extends BmobObject {
+    @Column(name = "id", isId = true)
+    private int id;
+    @Column(name="mp3_name")
     private String mp3_name;
+    @Column(name="mp3_url")
     private String mp3_url;
+    @Column(name="mp3_file_url")
     private String mp3_file_url;
+    @Column(name="isCollect")
+    private int isCollect;
+    @Column(name="isReaded")
+    private int isReaded;
+    @Column(name="personObjId")
+    private String personObjId;
+
+    public String getPersonObjId() {
+        return personObjId;
+    }
+
+    public void setPersonObjId(String personObjId) {
+        this.personObjId = personObjId;
+    }
+
+    public int getIsCollect() {
+        return isCollect;
+    }
+
+    public void setIsCollect(int isCollect) {
+        this.isCollect = isCollect;
+    }
+
+    public int getIsReaded() {
+        return isReaded;
+    }
+
+    public void setIsReaded(int isReaded) {
+        this.isReaded = isReaded;
+    }
 
     public String getMp3_file_url() {
         return mp3_file_url;

@@ -37,6 +37,7 @@ import cn.bmob.v3.BmobQuery;
 import cn.bmob.v3.listener.DeleteListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.SaveListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 /**
  * Created by lmz_cxm on 2015/11/29.
@@ -231,8 +232,8 @@ public class StoryDetailActivity extends BaseActivity {
                     //先查询此条收藏的id
                     getMobBeanId();
                     //取消收藏
-                    mStoryBean.setObjectId(mCollectObjId);
-                    mStoryBean.delete(mContext, new DeleteListener() {
+                    mStoryBean.setIsCollect(0);
+                    mStoryBean.update(mContext, new UpdateListener() {
                         @Override
                         public void onSuccess() {
                             isCollected = false;
@@ -247,6 +248,21 @@ public class StoryDetailActivity extends BaseActivity {
                             ToastAlone.show(R.string.collect_cancel_fail);
                         }
                     });
+//                    mStoryBean.delete(mContext, new DeleteListener() {
+//                        @Override
+//                        public void onSuccess() {
+//                            isCollected = false;
+//                            ToastAlone.show(R.string.collect_cancel);
+//                            collect_img.setBackgroundResource(R.drawable.selector_collection);
+//                        }
+//
+//                        @Override
+//                        public void onFailure(int i, String s) {
+//                            isCollected = true;
+//                            LogUtil.v(s);
+//                            ToastAlone.show(R.string.collect_cancel_fail);
+//                        }
+//                    });
                 } else {
                     //收藏
                     if (TextUtils.isEmpty(spUtil.getPersonObjid())) {

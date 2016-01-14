@@ -49,6 +49,9 @@
         <activity
             android:name=".activity.HeadActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.MusciCollectActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
