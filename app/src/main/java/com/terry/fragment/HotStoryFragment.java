@@ -80,11 +80,26 @@ public class HotStoryFragment extends BaseFragment {
             progressbar.setVisibility(View.GONE);
             return;
         }
-        getStoryData();
     }
 
 
-    private void getStoryData() {
+    @Override
+    public void onStart() {
+        super.onStart();
+        LogUtil.v("onStart");
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) {
+            LogUtil.v("onHiddenChanged true");
+        }else {
+            LogUtil.v("onHiddenChanged false");
+        }
+    }
+
+    public void getStoryData() {
         new AsyTask().execute(mHotBaseUrl);
     }
 

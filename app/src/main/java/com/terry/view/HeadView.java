@@ -58,6 +58,7 @@ public class HeadView extends ImageView {
     private Paint paint;
     private RectF rectF;
     private Rect dst;
+    private Rect src;
     private Point mCenterPoint;
 
     public HeadView(Context context) {
@@ -83,7 +84,7 @@ public class HeadView extends ImageView {
         mScH = screenWH[1];
         mCenterPoint.set(mScW / 2, mScH / 2);
 
-        mCircleRadius = mScW * 2 / 5;
+        mCircleRadius = mScW * 1 / 4;
 
         mAvatorWidth = mCircleRadius * 2;
 
@@ -111,25 +112,25 @@ public class HeadView extends ImageView {
 
     private void initCutPicParams() {
         float left,top,right,bottom,dst_left,dst_top,dst_right,dst_bottom;
-        float offsetX = mCenterPoint.x - 0-mCircleRadius;
-        float offsetY = mCenterPoint.y - 0-mCircleRadius;
+        float offsetX = mCenterPoint.x -mCircleRadius;
+        float offsetY = mCenterPoint.y -mCircleRadius;
 
         top = offsetY;
         bottom = offsetY+mAvatorWidth;
         left = offsetX;
         right = offsetX+mAvatorWidth;
 
-        dst_left = 0;
-        dst_top = 0;
-        dst_right = mAvatorWidth;
-        dst_bottom = mAvatorWidth;
+        dst_left = mScW / 2 - mCircleRadius;
+        dst_top = mScH / 2 - mCircleRadius;
+        dst_right = mScW / 2 + mCircleRadius;
+        dst_bottom = mScH / 2 + mCircleRadius;
 
-        output = Bitmap.createBitmap(mAvatorWidth,
-                mAvatorWidth, Bitmap.Config.ARGB_8888);
+        output = Bitmap.createBitmap(mScW,
+                mScH, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(output);
 
         paint = new Paint();
-//        src = new Rect((int)left, (int)top, (int)right, (int)bottom);
+        src = new Rect((int)left, (int)top, (int)right, (int)bottom);
         dst = new Rect((int)dst_left, (int)dst_top, (int)dst_right, (int)dst_bottom);
         rectF = new RectF(dst);
 
@@ -152,7 +153,7 @@ public class HeadView extends ImageView {
 //            mBaseBitmap = bitmap;
             Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, mScW, mScH, true);
             mBitmap = scaledBitmap;
-            setImageBitmap(scaledBitmap);
+            setImageBitmap(mBitmap);
         }
 //        invalidate();
     }
@@ -241,7 +242,7 @@ public class HeadView extends ImageView {
 
         canvas.drawRoundRect(rectF, mCircleRadius, mCircleRadius, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(mBitmap, null, dst, paint);
+        canvas.drawBitmap(mBitmap, src, dst, paint);
         return output;
     }
 }

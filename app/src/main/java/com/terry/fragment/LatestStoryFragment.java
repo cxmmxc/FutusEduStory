@@ -49,7 +49,7 @@ public class LatestStoryFragment extends BaseFragment {
 
     private PullToRefreshListView story_pull_list;
     private boolean isLastPage;
-    private int mLatestStart = 1;
+    private int mLatestStart = 48;
     private StoryContentAdapter mStoryAdapter;
     private ListView mStoryList;
     private String mLatestBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_" + mLatestStart
@@ -158,34 +158,42 @@ public class LatestStoryFragment extends BaseFragment {
         protected void onPostExecute(Document document) {
             super.onPostExecute(document);
             story_pull_list.onRefreshComplete();
-//            File file = new File(Environment.getExternalStorageDirectory() + "/Latest12071513.txt");
-//            try {
-//                if (!file.exists()) {
-//                    file.createNewFile();
-//                }
-//                FileWriter writer = new FileWriter(file.getAbsolutePath());
-//                BufferedWriter bufferedWriter = new BufferedWriter(writer);
-//                bufferedWriter.write(document.toString());
-//                bufferedWriter.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            File file = new File(Environment.getExternalStorageDirectory() + "/Latest_qbaobei.txt");
+            try {
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                String str = document.toString();
+                FileWriter writer = new FileWriter(file.getAbsolutePath());
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                bufferedWriter.write(str);
+                bufferedWriter.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (document == null) {
                 ToastAlone.show(R.string.load_fail_hint);
                 return;
             }
             Element page = document.select("div.page").first();
-            Elements children = page.children();
-            if (children.size() == 1 && "prev".equals(children.first().attr("class"))) {
-                //证明已经到了最后一页
-                isLastPage = true;
-                ToastAlone.show(R.string.load_all_data);
-                Log.i("cxm", "the last one");
-                return;
+            if (page != null) {
+                Elements children = page.children();
+                if (children.size() == 1 && "prev".equals(children.first().attr("class"))) {
+                    //证明已经到了最后一页
+                    isLastPage = true;
+                    ToastAlone.show(R.string.load_all_data);
+                    Log.i("cxm", "the last one");
+                    return;
+                }
             }
             progressbar.setVisibility(View.GONE);
+            //使用新的爬虫规则
+            Elements div_elements = document.select("div.news-list-ul");
+            LogUtil.w(div_elements.size()+"");
+
+
             Elements elements = document.select("[class]");
             for (Element element : elements) {
                 if (element == null) {

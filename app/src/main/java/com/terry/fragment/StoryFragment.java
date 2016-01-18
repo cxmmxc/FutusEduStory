@@ -43,6 +43,7 @@ public class StoryFragment extends BaseFragment {
     private ViewPager story_pager;
     private List<Fragment> fraglist;
     private StoryPagerAdapter mPagerAdapter;
+    private boolean isHotFirst;
 
     @Nullable
     @Override
@@ -65,6 +66,8 @@ public class StoryFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        story_pager.setOffscreenPageLimit(0);
+
         latestStoryFragment = new LatestStoryFragment();
         hotStoryFragment = new HotStoryFragment();
         fraglist = new ArrayList<>();
@@ -141,6 +144,10 @@ public class StoryFragment extends BaseFragment {
                         resetTextColor();
                         mMode = FutusMode.HotMode;
                         hot_btn.setTextColor(Color.WHITE);
+                        if (!isHotFirst) {
+                            hotStoryFragment.getStoryData();
+                            isHotFirst = true;
+                        }
                         break;
                 }
 
