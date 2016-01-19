@@ -15,18 +15,22 @@ public class StoryBean extends BmobObject {
 
     @Column(name = "id", isId = true)
     private int id;
-    @Column(name="picUrl")
-    private String picUrl;
     @Column(name="title")
     private String title;
-    @Column(name="mContentUrl")
-    private String mContentUrl;
+    @Column(name="description")
+    private String description;
+    @Column(name="img")
+    private String img;
+    @Column(name="url")
+    private String url;
     @Column(name="isCollect")
     private int isCollect;//默认0是未收藏，1是收藏
     @Column(name = "Content")
     private String Content;
     @Column(name = "isRead")//默认0是未读，1是已读
     private int isRead;
+    @Column(name="smallimg")
+    private String smallimg;
 
     private String personObjId;//对应的用户的personId，用于收藏用
 
@@ -36,6 +40,14 @@ public class StoryBean extends BmobObject {
 
     public void setPersonObjId(String personObjId) {
         this.personObjId = personObjId;
+    }
+
+    public String getSmallimg() {
+        return smallimg;
+    }
+
+    public void setSmallimg(String smallimg) {
+        this.smallimg = smallimg;
     }
 
     public int getId() {
@@ -63,21 +75,6 @@ public class StoryBean extends BmobObject {
     }
 
 
-    public String getmContentUrl() {
-        return mContentUrl;
-    }
-
-    public void setmContentUrl(String mContentUrl) {
-        this.mContentUrl = mContentUrl;
-    }
-
-    public String getPicUrl() {
-        return picUrl;
-    }
-
-    public void setPicUrl(String picUrl) {
-        this.picUrl = picUrl;
-    }
 
     public String getTitle() {
         return title;
@@ -95,16 +92,28 @@ public class StoryBean extends BmobObject {
         this.isRead = isRead;
     }
 
-    @Override
-    public String toString() {
-        return "StoryBean{" +
-                "id=" + id +
-                ", picUrl='" + picUrl + '\'' +
-                ", title='" + title + '\'' +
-                ", mContentUrl='" + mContentUrl + '\'' +
-                ", isCollect=" + isCollect +
-                ", Content='" + Content + '\'' +
-                ", isRead=" + isRead +
-                '}';
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -12,4 +12,6 @@ public class Constans {
     public static String BaseUrl = "http://cloud.bmob.cn/"+BmobSecret;
 
     public static int Limit_Count = 30;
+
+    public static String defualt_pic = "http://www.qbaobei.com/Public/Home/qbaobei/images/default1.png";
 }

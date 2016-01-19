@@ -75,7 +75,7 @@ public class StoryDetailActivity extends BaseActivity {
 //        progressDialog = new ProgressDialog(mContext);
 //        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 //        progressDialog.setMessage("加载中");
-        mUrl = mStoryBean.getmContentUrl();
+        mUrl = mStoryBean.getUrl();
         title = mStoryBean.getTitle();
         int[] screenWH = MeasureTool.getScreenWH(mContext);
 
@@ -156,8 +156,9 @@ public class StoryDetailActivity extends BaseActivity {
             Document document = null;
             Element first = null;
             try {
-                document = Jsoup.connect(mUrl).timeout(8000).get();
-                first = document.select("div.news-artbody").first();
+                document = Jsoup.connect(mUrl).timeout(9000).get();
+                LogUtil.v(document.toString());
+                first = document.select("div.detail-art-main").first();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -168,7 +169,7 @@ public class StoryDetailActivity extends BaseActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(final String s) {
             super.onPostExecute(s);
             progressbar.setVisibility(View.GONE);
             mStoryBean.setContent(s);
@@ -176,7 +177,7 @@ public class StoryDetailActivity extends BaseActivity {
             //并且默认存入到本地数据库
 //            progressDialog.dismiss();
 //            text11.setText(s);
-//            Log.w("cxm", s);
+            LogUtil.w(s);
             mWebView.loadDataWithBaseURL("http://www.qbaobei.com", mStyle + s, "text/html", "utf-8", null);
             try {
                 StoryBean bean = StoryApp.mDbManager.selector(StoryBean.class).where("title", "like", "%" + StoryDetailActivity.this.title + "%").findFirst();

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,12 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.terry.BaseFragment;
+import com.terry.Constans;
 import com.terry.R;
 import com.terry.activity.StoryDetailActivity;
 import com.terry.adapter.StoryContentAdapter;
@@ -31,7 +35,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.xutils.common.Callback;
 import org.xutils.common.util.LogUtil;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,6 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lmz_cxm on 2015/12/2.
@@ -49,11 +57,14 @@ public class LatestStoryFragment extends BaseFragment {
 
     private PullToRefreshListView story_pull_list;
     private boolean isLastPage;
-    private int mLatestStart = 48;
+    private int mLatestStart = 1;
     private StoryContentAdapter mStoryAdapter;
     private ListView mStoryList;
+    private int mStartNum = 20;
     private String mLatestBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_" + mLatestStart
             + ".html";
+    private String mTestJsonUrl = "http://dynamic.qbaobei.com/dynamic.php?s=/qbaobeimobile/cate_list/cate/207/star/" + mStartNum
+            + "&callback=jQuery11110999141864092687_1453174495543&_=1453174495548";
     private ProgressBar progressbar;
     private final static int STORY_REQUEST_CODE = 10;
 
@@ -88,7 +99,69 @@ public class LatestStoryFragment extends BaseFragment {
             progressbar.setVisibility(View.GONE);
             return;
         }
-        getStoryData();
+//        getStoryData();
+        getTestJson();
+    }
+
+    private String getJsonUrl(){
+        return "http://dynamic.qbaobei.com/dynamic.php?s=/qbaobeimobile/cate_list/cate/207/star/" + mStartNum
+                + "&callback=jQuery11110999141864092687_1453174495543&_=1453174495548";
+    };
+
+    private void getTestJson() {
+
+        RequestParams params = new RequestParams(getJsonUrl());
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String s) {
+                analyzeJson(s);
+            }
+
+            @Override
+            public void onError(Throwable throwable, boolean b) {
+
+            }
+
+            @Override
+            public void onCancelled(CancelledException e) {
+
+            }
+
+            @Override
+            public void onFinished() {
+                story_pull_list.onRefreshComplete();
+                progressbar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    //进行json解析
+    private void analyzeJson(String json) {
+        if (!TextUtils.isEmpty(json)) {
+            String[] cir_arr_one = json.split("\\(");
+            String cir_one = cir_arr_one[1];
+            String[] cir_arr_two = cir_one.split("\\)");
+            String cir_two = cir_arr_two[0];
+            if ("null".equals(cir_two)) {
+                //标明 已经全部加载完
+                //证明已经到了最后一页
+                isLastPage = true;
+                ToastAlone.show(R.string.load_all_data);
+                Log.i("cxm", "the last one");
+                return;
+            }else {
+                Gson gson = new Gson();
+                List<StoryBean> storyBeans = gson.fromJson(cir_two, new TypeToken<List<StoryBean>>() {
+                }.getType());
+                if (storyBeans != null) {
+                    if (mStartNum == 20) {
+                        mStoryAdapter.setData(storyBeans);
+                    } else {
+                        mStoryAdapter.addData(storyBeans);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -96,13 +169,15 @@ public class LatestStoryFragment extends BaseFragment {
         new AsyTask().execute(mLatestBaseUrl);
     }
 
+
     @Override
     protected void setListener() {
         story_pull_list.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-                mLatestStart = 1;
-                new AsyTask().execute(getBaseUrl());
+                mStartNum = 20;
+//                new AsyTask().execute(getBaseUrl());
+                getTestJson();
             }
 
             @Override
@@ -110,8 +185,9 @@ public class LatestStoryFragment extends BaseFragment {
                 if (isLastPage) {
                     return;
                 }
-                mLatestStart++;
-                new AsyTask().execute(getBaseUrl());
+                mStartNum += 10;
+//                new AsyTask().execute(getBaseUrl());
+                getTestJson();
             }
         });
 
@@ -191,10 +267,70 @@ public class LatestStoryFragment extends BaseFragment {
             progressbar.setVisibility(View.GONE);
             //使用新的爬虫规则
             Elements div_elements = document.select("div.news-list-ul");
-            LogUtil.w(div_elements.size()+"");
+            if (div_elements != null) {
+                Element div_fir = div_elements.first();
+                if (div_fir != null) {
+                    Elements div_children = div_fir.children();
+                    if (div_children != null) {
+                        ArrayList<StoryBean> storyBeans = new ArrayList<StoryBean>();
+                        for (Element element : div_children) {
+                            StoryBean bean = new StoryBean();
+                            Element href_elem = element.select("a[href]").first();
+                            String href_str = href_elem.attr("href");
+                            Element img_elem = element.select("img[src]").first();
+                            String img_str = Constans.defualt_pic;
+                            if (img_elem != null) {
+                                img_str = img_elem.attr("src");
+                            }
+                            Element tit_element = element.select("p.tit").first();
+                            String tit_str = tit_element.text();
+                            LogUtil.v(tit_str + "---" + href_str + "---" + img_str);
+                            bean.setTitle(tit_str);
+                            bean.setImg(img_str);
+                            bean.setUrl(href_str);
+                            storyBeans.add(bean);
+                        }
+                        if (mLatestStart == 1) {
+                            mStoryAdapter.setData(storyBeans);
+                        } else {
+                            mStoryAdapter.addData(storyBeans);
+                        }
+                    }
+                }
+            } else {
+                //立马启动第二种解析方式
+                Elements ul_elements = document.select("ul.index-ul");
+                if (ul_elements != null) {
+                    Element ul_fir = ul_elements.first();
+                    Elements ul_children = ul_fir.children();
+                    if (ul_children != null) {
+                        ArrayList<StoryBean> storyBeans = new ArrayList<StoryBean>();
+                        for (Element child : ul_children) {
+                            StoryBean bean = new StoryBean();
+                            Element href_elem = child.select("a[href]").first();
+                            Element img_elem = child.select("img[src]").first();
+                            String title = href_elem.text();
+                            String content_url = href_elem.attr("href");
+                            String img_url = Constans.defualt_pic;
+                            if (img_elem != null) {
+                                img_url = img_elem.attr("src");
+                            }
+                            bean.setTitle(title);
+                            bean.setUrl(content_url);
+                            bean.setImg(img_url);
+                            storyBeans.add(bean);
+                        }
+                        if (mLatestStart == 1) {
+                            mStoryAdapter.setData(storyBeans);
+                        } else {
+                            mStoryAdapter.addData(storyBeans);
+                        }
+                    }
+                }
+            }
 
 
-            Elements elements = document.select("[class]");
+            /*Elements elements = document.select("[class]");
             for (Element element : elements) {
                 if (element == null) {
                     Log.v("cxm", "null");
@@ -229,13 +365,14 @@ public class LatestStoryFragment extends BaseFragment {
                         }
                     }
                 }
-            }
+            }*/
         }
 
         @Override
         protected Document doInBackground(String... params) {
             Document document = null;
             try {
+                LogUtil.e(params[0]);
                 document = Jsoup.connect(params[0]).timeout(9000)
                         .post();
 //                Elements elements = document.getElementsByClass("ulTextlist_2 clear");

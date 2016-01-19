@@ -86,7 +86,7 @@ public class StoryContentAdapter extends BaseAdapter {
             e.printStackTrace();
         }
 
-        String url = storyBean.getPicUrl();
+        String url = storyBean.getImg();
 
         if (!TextUtils.isEmpty(url)) {
             viewHolder.mDrawImg.setImageURI(Uri.parse(url));

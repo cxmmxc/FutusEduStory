@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +33,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.xutils.common.util.LogUtil;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by lmz_cxm on 2015/12/2.
@@ -83,25 +95,106 @@ public class HotStoryFragment extends BaseFragment {
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        LogUtil.v("onStart");
+    public void getStoryData() {
+//        new AsyTask().execute(mHotBaseUrl);
+        new HotTask().execute();
     }
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (hidden) {
-            LogUtil.v("onHiddenChanged true");
-        }else {
-            LogUtil.v("onHiddenChanged false");
+    class HotTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                URL url = new URL(getBaseUrl());
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                InputStream in = new BufferedInputStream(conn.getInputStream());
+                String result = readInStream(in);
+                LogUtil.v(result);
+                return  result;
+//            conn.setRequestMethod("GET");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressbar.setVisibility(View.GONE);
+            story_pull_list.onRefreshComplete();
+//            File file = new File(Environment.getExternalStorageDirectory() + "/hot.txt");
+//
+//            try {
+//                if(!file.exists()) {
+//                    file.createNewFile();
+//                }
+//                FileWriter writer = new FileWriter(file.getAbsolutePath());
+//                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+//                bufferedWriter.write(s);
+//                bufferedWriter.close();
+//            } catch (FileNotFoundException e) {
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+            if (!TextUtils.isEmpty(s)) {
+                Document document = Jsoup.parse(s);
+                Element page = document.select("div.page").first();
+                Element next = page.select("a.next").first();
+                if (next == null) {
+                    isLastPage = true;
+                    ToastAlone.show(R.string.load_all_data);
+                    Log.i("cxm", "the last one");
+                    return;
+                }
+                Element rulElement = document.select("ul.list-conBox-ul").first();
+                Elements docuElements = rulElement.children();
+                ArrayList<StoryBean> storyBeans = new ArrayList<StoryBean>();
+                for (Element element : docuElements) {
+                    StoryBean bean = new StoryBean();
+                    if (element == null) {
+                        Log.v("cxm", "null");
+                    } else {
+                        Element href_element = element.select("[href]").first();
+
+//                    LogUtil.w(href_element.attr("href"));
+
+                        Element img_element = href_element.select("img[src]").first();
+//                    LogUtil.i(img_element.attr("src") + "/n"
+//                                    + img_element.attr("alt")
+//                    );
+                        bean.setUrl(href_element.attr("href"));
+                        bean.setTitle(img_element.attr("alt"));
+                        String picUrl = img_element.attr("src");
+                        if (picUrl.startsWith("http")) {
+                            //证明是有图片的，完整图片
+                            bean.setImg(picUrl);
+                        } else {
+                            bean.setImg("http://www.qbaobei.com" + picUrl);
+                        }
+                        storyBeans.add(bean);
+                    }
+                }
+                if (mHotStart == 1) {
+                    mStoryAdapter.setData(storyBeans);
+                } else {
+                    mStoryAdapter.addData(storyBeans);
+                }
+            }else {
+                ToastAlone.show(R.string.load_fail_hint);
+                return;
+            }
         }
     }
 
-    public void getStoryData() {
-        new AsyTask().execute(mHotBaseUrl);
+    private String readInStream(InputStream in) {
+        Scanner scanner = new Scanner(in).useDelimiter("\\A");
+        return scanner.hasNext() ? scanner.next() : "";
     }
+
 
     @Override
     protected void setListener() {
@@ -109,7 +202,8 @@ public class HotStoryFragment extends BaseFragment {
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
                 mHotStart = 1;
-                new AsyTask().execute(getBaseUrl());
+//                new AsyTask().execute(getBaseUrl());
+                new HotTask().execute();
             }
 
             @Override
@@ -118,7 +212,8 @@ public class HotStoryFragment extends BaseFragment {
                     return;
                 }
                 mHotStart++;
-                new AsyTask().execute(getBaseUrl());
+//                new AsyTask().execute(getBaseUrl());
+                new HotTask().execute();
             }
         });
 
@@ -166,25 +261,26 @@ public class HotStoryFragment extends BaseFragment {
             super.onPostExecute(document);
             story_pull_list.onRefreshComplete();
 
-//            File file = new File(Environment.getExternalStorageDirectory() + "/hot.txt");
-//
-//            try {
-//                if(!file.exists()) {
-//                    file.createNewFile();
-//                }
-//                FileWriter writer = new FileWriter(file.getAbsolutePath());
-//                BufferedWriter bufferedWriter = new BufferedWriter(writer);
-//                bufferedWriter.write(document.toString());
-//                bufferedWriter.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            File file = new File(Environment.getExternalStorageDirectory() + "/hot.txt");
+
+            try {
+                if(!file.exists()) {
+                    file.createNewFile();
+                }
+                FileWriter writer = new FileWriter(file.getAbsolutePath());
+                BufferedWriter bufferedWriter = new BufferedWriter(writer);
+                bufferedWriter.write(document.toString());
+                bufferedWriter.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             if (document == null) {
                 ToastAlone.show(R.string.load_fail_hint);
                 return;
             }
+
 
             Element page = document.select("div.page").first();
             Element next = page.select("a.next").first();
@@ -211,14 +307,14 @@ public class HotStoryFragment extends BaseFragment {
 //                    LogUtil.i(img_element.attr("src") + "/n"
 //                                    + img_element.attr("alt")
 //                    );
-                    bean.setmContentUrl(href_element.attr("href"));
+                    bean.setUrl(href_element.attr("href"));
                     bean.setTitle(img_element.attr("alt"));
                     String picUrl = img_element.attr("src");
                     if (picUrl.startsWith("http")) {
                         //证明是有图片的，完整图片
-                        bean.setPicUrl(picUrl);
+                        bean.setImg(picUrl);
                     } else {
-                        bean.setPicUrl("http://www.qbaobei.com" + picUrl);
+                        bean.setImg("http://www.qbaobei.com" + picUrl);
                     }
                     storyBeans.add(bean);
                 }
@@ -235,7 +331,8 @@ public class HotStoryFragment extends BaseFragment {
             Document document = null;
 //            LogUtil.i(params[0]);
             try {
-                document = Jsoup.connect(params[0]).timeout(15000)
+                LogUtil.v(params[0]);
+                document = Jsoup.connect(params[0]).timeout(9000)
                         .get();
 //                Elements elements = document.getElementsByClass("ulTextlist_2 clear");
 
@@ -244,6 +341,7 @@ public class HotStoryFragment extends BaseFragment {
                 e.printStackTrace();
             }
             if (document != null) {
+                LogUtil.v("document != null");
                 return document;
             }
             return null;
