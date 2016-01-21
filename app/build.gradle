@@ -9,7 +9,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.terry"
+        applicationId "com.terry.futus"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
