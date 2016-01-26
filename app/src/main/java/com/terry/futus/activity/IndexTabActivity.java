@@ -132,17 +132,24 @@ public class IndexTabActivity extends AppCompatActivity {
                 if (mSelectMode == SelectMode.Mine) {
                     return;
                 }
+                resetMode(mSelectMode);
+                mSelectMode = SelectMode.Mine;
+                img_music.setImageResource(R.mipmap.sailfish_user_sel);
+                music_text.setTextColor(getResources().getColor(R.color.tab_text_select_color));
+                EnterFragment(3);
+
+
                 //判断是否已经登录，未登录则进入登录页面
-                if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
-                    Intent itent = new Intent(IndexTabActivity.this, LoginActivity.class);
-                    startActivity(itent);
-                }else {
-                    EnterFragment(3);
-                    resetMode(mSelectMode);
-                    mSelectMode = SelectMode.Mine;
-                    img_mine.setImageResource(R.mipmap.sailfish_user_sel);
-                    mine_text.setTextColor(getResources().getColor(R.color.tab_text_select_color));
-                }
+//                if (TextUtils.isEmpty(spUtil.getPersonObjid())) {
+//                    Intent itent = new Intent(IndexTabActivity.this, LoginActivity.class);
+//                    startActivity(itent);
+//                }else {
+//                    EnterFragment(3);
+//                    resetMode(mSelectMode);
+//                    mSelectMode = SelectMode.Mine;
+//                    img_mine.setImageResource(R.mipmap.sailfish_user_sel);
+//                    mine_text.setTextColor(getResources().getColor(R.color.tab_text_select_color));
+//                }
             }
         });
     }

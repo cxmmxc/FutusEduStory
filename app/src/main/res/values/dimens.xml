@@ -3,5 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="left_menu_width">200dp</dimen>
-    <dimen name="mine_layout_margin">10dp</dimen>
+    <dimen name="mine_layout_margin">8dp</dimen>
+    <dimen name="feedback_item_height">55dp</dimen>
+    <dimen name="feedback_item_txt_padd">15dp</dimen>
 </resources>

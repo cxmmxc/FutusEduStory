@@ -60,7 +60,7 @@ public class LatestStoryFragment extends BaseFragment {
     private int mLatestStart = 1;
     private StoryContentAdapter mStoryAdapter;
     private ListView mStoryList;
-    private int mStartNum = 20;
+    private int mStartNum = 1;
     private String mLatestBaseUrl = "http://www.qbaobei.com/jiaoyu/tj/tjgs/List_" + mLatestStart
             + ".html";
     private String mTestJsonUrl = "http://dynamic.qbaobei.com/dynamic.php?s=/qbaobeimobile/cate_list/cate/207/star/" + mStartNum
